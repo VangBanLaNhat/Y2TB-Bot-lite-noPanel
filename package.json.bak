@@ -1,0 +1,81 @@
+{
+  "name": "vangbanlanhat-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "electron ./index/main.js",
+    "app": "electron ./index/main.js",
+    "rebuild": "electron-rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VangBanLaNhat/vangbanlanhat-bot.git"
+  },
+  "keywords": [
+    "chatbot",
+    "facebook",
+    "messenger"
+  ],
+  "author": "Kaysil <kaysilminer@gmail.com> (kaysil.net), HerokeyVN <herokey2018@gmail.com>, HyTommy <hygameo2@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/VangBanLaNhat/vangbanlanhat-bot/issues"
+  },
+  "homepage": "https://github.com/VangBanLaNhat/vangbanlanhat-bot#readme",
+  "dependencies": {
+    "adm-zip": "^0.5.9",
+    "axios": "^0.21.4",
+    "dotenv": "^10.0.0",
+    "download-git-repo": "^3.0.2",
+    "electron": "^13.6.3",
+    "electron-context-menu": "^3.1.1",
+    "electron-rebuild": "^3.2.0",
+    "event-stream": "^4.0.1",
+<<<<<<< HEAD
+    "fca-unofficial": "github:VangBanLaNhat/fca-unofficial",
+    "luxon": "^2.0.0",
+    "module-from-string": "^2.2.0",
+    "node-fetch": "^2.6.1",
+    "node-pty": "^0.10.1",
+=======
+    "fca-unofficial": "git+https://github.com/VangBanLaNhat/fca-unofficial.git",
+    "luxon": "^2.0.0",
+    "module-from-string": "^2.2.0",
+    "node-fetch": "^2.6.1",
+    "node-pty": "",
+>>>>>>> b910da017a40f775c0eb708ecde75f29de60fa2c
+    "readline": "^1.3.0",
+    "require-from-string": "^2.0.2",
+    "sharp": "^0.30.3",
+    "stream": "^0.0.2",
+    "stream-buffers": "^3.0.2",
+    "strip-bom": "^4.0.0",
+    "sync-request": "^6.1.0",
+    "wait-for-stuff": "^1.4.0",
+    "xterm": "^4.13.0"
+  },
+  "build": {
+    "appId": "com.VangBanLaNhat.VBLN",
+    "productName": "VBLN",
+    "copyright": "Copyright © 2022",
+    "mac": {
+      "icon": "./index/icon/icon_square.jpg",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "./index/icon/icon_square.jpg"
+    },
+    "files": [
+      "./build/**/*",
+      "./dist/**/*",
+      "./node_modules/**/*",
+      "./public/**/*",
+      "*.js"
+    ],
+    "directories": {
+      "buildResources": "public"
+    }
+  }
+}
