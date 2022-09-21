@@ -1,2 +1,2 @@
 # VangBanLaNhat-Bot
-edit chỉ để được vào contributor
+Hehe làm ny tui hok :3
