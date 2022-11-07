@@ -22,7 +22,6 @@ function core() {
 	return{
     	"main_bot": {
     		"consoleColor": "32",
-    		//https://upload.wikimedia.org/wikipedia/commons/3/34/ANSI_sample_program_output.png
     		"dataSaveTime": "5",
     		"developMode": false,
     		"toggleLog": true,
