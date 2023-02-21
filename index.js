@@ -18,12 +18,12 @@ var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
 ensureExists(path.join(__dirname, "logs"));
 global.logStart = `${dt.day}D${dt.month}M${dt.year}Y.T${dt.hour}H${dt.minute}M${dt.second}S`;
 var ll = scanDir(".txt", path.join(__dirname, "logs"));
-for (var i=0; i<ll.length; i++){
-    var lll = ll[i].slice(0,2);
-    lll = lll.replace("D","");
-    if(dt.day.toString() != lll){
-        fs.unlinkSync(path.join(__dirname, "logs", ll[i]));
-    }
+for (var i = 0; i < ll.length; i++) {
+	var lll = ll[i].slice(0, 2);
+	lll = lll.replace("D", "");
+	if (dt.day.toString() != lll) {
+		fs.unlinkSync(path.join(__dirname, "logs", ll[i]));
+	}
 }
 
 //config loader
@@ -33,78 +33,79 @@ for (var i=0; i<ll.length; i++){
 //let glb = JSON.stringify(global);
 
 /*setInterval(function(){
-    require("./core/util/global.js")();
+	require("./core/util/global.js")();
 }, 1*60*60*1000)*/
-async function start (){
-	globalC = {};
+async function start() {
+	globalC = Object.assign({}, global);
 	globalC.data = global.data;
 	log.blank();
 	log.log("Config", "Loading config...");
-	try{
+	try {
 		global.config = require("./core/util/getConfig.js").getConfig();
 		global.coreconfig = require("./core/util/getConfig.js").getCoreConfig();
 		log.log("Config", "Loading config success!");
 		log.blank();
 	}
-	catch(err){
+	catch (err) {
 		log.log(err);
-	    log.err("Config", "Can't load Config. Existing...");
+		log.err("Config", "Can't load Config. Existing...");
 		log.blank();
-	    process.exit(101);
+		process.exit(101);
 	}
 
 
 	//data loader
 	log.log("Data", "Loading data...");
-	try{
-	    require("./core/util/getData.js").getdt();
-	    //require("./core/util/getData.js").getprdt();
-	    log.log("Data", "Loading data success!");
+	try {
+		require("./core/util/getData.js").getdt();
+		//require("./core/util/getData.js").getprdt();
+		log.log("Data", "Loading data success!");
 	}
-	catch(err){
-	    log.log(err);
-	    log.err("Data", "Can't load Data. Existing...");
+	catch (err) {
+		log.log(err);
+		log.err("Data", "Can't load Data. Existing...");
 		log.blank();
-	    process.exit(102);
+		process.exit(102);
 	}
-	setInterval(function(){
-	    try{
-	        fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(globalC.data, null, 4), {mode: 0o666});
-	        //fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
-	    }
-	    catch(err){
-	        log.err("Data", "Can't auto save data with error: "+err);
-	    }
-	}, global.coreconfig.main_bot.dataSaveTime*1000)
+	setInterval(function () {
+		try {
+			fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(globalC.data, null, 4), { mode: 0o666 });
+			//fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
+		}
+		catch (err) {
+			if(err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
+		}
+	}, global.coreconfig.main_bot.dataSaveTime * 1000)
 
 
-	for(let i in global){
-	    if(i != "global" && i != "plugins"){
-	        globalC[i] = global[i];
-	    } else if(i == "plugins"){
-	    	globalC[i] = JSON.parse(JSON.stringify(global[i]))
-	    }
+	// for(let i in globalC){
+	//     if(i != "global" && i != "plugins"){
+	//         globalC[i] = global[i];
+	//     } else if(i == "plugins"){
+	//     	globalC[i] = JSON.parse(JSON.stringify(global[i]))
+	//     }
 
-	}
+	// }
 
 	//loadPlugins
 	log.log("Plugin", "Loading Plugins...")
-	try{
-	    ensureExists(path.join(__dirname, "lang"));
-	    await require("./core/util/loadPlugin.js")();
-	    for(let i in global){
-	    	if(i != "global" && i != "plugins"){
-	        globalC[i] = global[i];
-	    } else if(i == "plugins"){
-	    	globalC[i] = JSON.parse(JSON.stringify(global[i]))
-	    }
-		}
-		for(let i in globalC.plugins.VBLN.command){
-	    	delete globalC.plugins.VBLN.command[i].main;
-		}
+	try {
+		ensureExists(path.join(__dirname, "lang"));
+		await require("./core/util/loadPlugin.js")();
+		globalC = Object.assign({}, global);
+		// for (let i in global) {
+		// 	if (i != "global" && i != "plugins") {
+		// 		globalC[i] = global[i];
+		// 	} else if (i == "plugins") {
+		// 		globalC[i] = JSON.parse(JSON.stringify(global[i]))
+		// 	}
+		// }
+		// for (let i in globalC.plugins.VBLN.command) {
+		// 	delete globalC.plugins.VBLN.command[i].main;
+		// }
 	}
-	catch(err){
-	    log.err("Plugins", "Can't load plugins with error: "+err);
+	catch (err) {
+		log.err("Plugins", "Can't load plugins with error: " + err);
 	}
 
 
@@ -112,16 +113,19 @@ async function start (){
 	log.log("Languages", "Loading Languages...");
 	require("./core/util/loadLang.js")();
 
-	for(let i in global){
-	    	if(i != "global" && i != "plugins"){
-	        globalC[i] = global[i];
-	    }
-	}
-
+	// for (let i in global) {
+	// 	if (i != "global" && i != "plugins") {
+	// 		globalC[i] = global[i];
+	// 	}
+	// }
+	globalC = Object.assign({}, global);
+	// for (let i in globalC.plugins.VBLN.command) {
+	// 	delete globalC.plugins.VBLN.command[i].main;
+	// }
 	//credentials loader
 	let fbCredentials = {
-	    email: global.config.facebook.FBemail,
-	    password: global.config.facebook.FBpassword
+		email: global.config.facebook.FBemail,
+		password: global.config.facebook.FBpassword
 	}
 	log.log("Manager", "Loading User-credentials...");
 	//log.log("Manager", `Appstate: ${(fs.existsSync(path.join(__dirname, "udata", "fbstate.json"))) ? "Yes" : "No"}`, `Email: ${(fbCredentials.email == "") ? `""` : fbCredentials.email}`, `Password: ${(fbCredentials.password == "") ? `""` : fbCredentials.password}`);
@@ -132,7 +136,7 @@ async function start (){
 
 	var loginstate;
 	(!(fs.existsSync(path.join(__dirname, "udata", "fbstate.json"))) && fbCredentials.email == "" && fbCredentials.password == "") ? loginstate = false : loginstate = true
-	if(loginstate){
+	if (loginstate) {
 		let loginOptions = {
 			"logLevel": global.coreconfig.facebook.logLevel,
 			"userAgent": global.coreconfig.facebook.userAgent,
@@ -160,14 +164,14 @@ async function start (){
 				if (err) {
 					switch (err.error) {
 						case 'login-approval':
-							log.log("Login","Account detected with 2-step verification (2-FA) enabled\nPlease enter verification code to continue");
+							log.log("Login", "Account detected with 2-step verification (2-FA) enabled\nPlease enter verification code to continue");
 							rl.question("Verification code: ", (code) => {
 								err.continue(code);
 								rl.close();
 							});
 							break;
 						default:
-							log.err("login" ,err);
+							log.err("login", err);
 					}
 					return;
 				}
@@ -184,30 +188,30 @@ start();
 
 //process.on("message", (a)=>{console.log(a)});
 
-process.on('exit', function(code) {
-	try{
-	    fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(globalC.data, null, 4), {mode: 0o666});
-	    console.log("Data", "Saved data!")
-	    //fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
+process.on('exit', function (code) {
+	try {
+		fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(globalC.data, null, 4), { mode: 0o666 });
+		console.log("Data", "Saved data!")
+		//fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
 	}
-	catch(err){
-	    log.err("Data", "Can't auto save data with error: "+err);
+	catch (err) {
+		log.err("Data", "Can't auto save data with error: " + err);
 	}
 });
 
 function ensureExists(path, mask) {
-  if (typeof mask != 'number') {
-    mask = 0o777;
-  }
-  try {
-    fs.mkdirSync(path, {
-      mode: mask,
-      recursive: true
-    });
-    return;
-  } catch (ex) {
-    return {
-      err: ex
-    };
-  }
+	if (typeof mask != 'number') {
+		mask = 0o777;
+	}
+	try {
+		fs.mkdirSync(path, {
+			mode: mask,
+			recursive: true
+		});
+		return;
+	} catch (ex) {
+		return {
+			err: ex
+		};
+	}
 }
