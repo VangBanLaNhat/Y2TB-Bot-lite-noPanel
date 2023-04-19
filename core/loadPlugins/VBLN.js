@@ -368,9 +368,9 @@ async function evelStringSync(str, fileName, dev) {
 	fileName = fileName ? fileName:(new Date()).getTime() + "";
 	
 	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
-	console.log(fileName)
+	//console.log(fileName)
 	let nameEnc = (enc.base64.encode(fileName))+".js";
-	console.log(nameEnc)
+	//console.log(nameEnc)
 	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
 	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
 	
