@@ -1,61 +1,69 @@
 const axios = require('axios');
 const AdmZip = require("adm-zip");
-const { requireFromString } = require('module-from-string');
+const {
+	requireFromString
+} = require('module-from-string');
+const enc = require("enc");
 const fs = require('fs');
 const path = require("path");
 const cmd = require('child_process');
 const stripBom = require("strip-bom");
-const { link } = require('fs/promises');
-const { Octokit } = require("@octokit/rest");
-const octokit = new Octokit({ auth: "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" });
+const {
+	link
+} = require('fs/promises');
+const {
+	Octokit
+} = require("@octokit/rest");
+const octokit = new Octokit({
+	auth: "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"
+});
 const log = require(path.join(__dirname, "..", "util", "log.js"));
 const scanDir = require(path.join(__dirname, "..", "util", "scanDir.js"));
 
 async function loadPlugin() {
-    !global.plugins.VBLN ? global.plugins.VBLN = {} : "";
-    !global.plugins.VBLN.command ? global.plugins.VBLN.command = {} : "";
+	!global.plugins.VBLN ? global.plugins.VBLN = {}: "";
+	!global.plugins.VBLN.command ? global.plugins.VBLN.command = {}: "";
 
-    
-    ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
-    if (global.coreconfig.main_bot.developMode) {
-        log.log("Plugins(VBLN)", "In developer mode only develop plugin and plugin eval, help, devtool can load!");
-        var list = scanDir(".js", path.join(__dirname, "..", "..", "plugins"));
-        ensureExists(path.join(__dirname, "..", "..", "plugins", "cache"));
-        var listFile = [];
-        for (var i = 0; i < list.length; i++) {
-            var check = path.join(__dirname, "..", "..", "plugins", list[i]);
-            if (!fs.lstatSync(check).isDirectory()) {
-                try {
-                    let pluginInfo = await evelStringInit(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString());
-                    var func = fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString();
-                    var t = installmd(list[i], pluginInfo);
-                    load(list[i], pluginInfo, func, true);
-                }
-                catch (err) {
-                    log.err("Plugins(VBLN)", "Can't load \"" + list[i] + "\" with error: " + err)
-                }
 
-            }
-        }
-    }
-    !global.data.pluginTemp ? global.data.pluginTemp = {
-        "Eval.js": "0.0.0",
-        "Help.js": "0.0.0"
-    } : "";
-    if (global.coreconfig.main_bot.developMode) {
-        var list = {
-            "Eval.js": "0.0.0",
-            "Help.js": "0.0.0"
-        }
-    }
-    else {
-        var list = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", "pluginList.json")).toString());
-    }
-    var name = Object.keys(list);
-    var data = [];
-    var i;
-    var res;
-    /*global.coreconfig.main_bot.developMode ? res = await axios(`https://api.maihuybao.repl.co/plugin?file=Eval.js,Help.js`) : res = await axios(`https://api.maihuybao.repl.co/plugin?file=${name.join(",")}`);
+	ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
+	if (global.coreconfig.main_bot.developMode) {
+		log.log("Plugins(VBLN)", "In developer mode only develop plugin and plugin eval, help, devtool can load!");
+		var list = scanDir(".js", path.join(__dirname, "..", "..", "plugins"));
+		ensureExists(path.join(__dirname, "..", "..", "plugins", "cache"));
+		var listFile = [];
+		for (var i = 0; i < list.length; i++) {
+			var check = path.join(__dirname, "..", "..", "plugins", list[i]);
+			if (!fs.lstatSync(check).isDirectory()) {
+				try {
+					let pluginInfo = await evelStringInit(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString(), list[i], true);
+					var func = fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString();
+					var t = installmd(list[i], pluginInfo);
+					load(list[i], pluginInfo, func, true);
+				}
+				catch (err) {
+					log.err("Plugins(VBLN)", "Can't load \"" + list[i] + "\" with error: " + err)
+				}
+
+			}
+		}
+	}
+	!global.data.pluginTemp ? global.data.pluginTemp = {
+		"Eval.js": "0.0.0",
+		"Help.js": "0.0.0"
+	}: "";
+	if (global.coreconfig.main_bot.developMode) {
+		var list = {
+			"Eval.js": "0.0.0",
+			"Help.js": "0.0.0"
+		}
+	} else {
+		var list = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", "pluginList.json")).toString());
+	}
+	var name = Object.keys(list);
+	var data = [];
+	var i;
+	var res;
+	/*global.coreconfig.main_bot.developMode ? res = await axios(`https://api.maihuybao.repl.co/plugin?file=Eval.js,Help.js`) : res = await axios(`https://api.maihuybao.repl.co/plugin?file=${name.join(",")}`);
     var files = res.data.data;
     var res = await axios.get(`https://api.maihuybao.repl.co/storage`);
     ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
@@ -108,21 +116,21 @@ async function loadPlugin() {
             fs.unlinkSync(path.join(__dirname, "..", "..", "plugins", "obb", obb[i].obb));
         }
     }*/
-    //process.exit();
-    for (i = 0; i < name.length; i++) {
-        try {
-            let func = await getFileContent(name[i]);
-            if (!func) throw new Error("Can't load \"" + name[i] + "\" with error: " + err);
-            let pluginInfo = await evelStringInit(func);
-            var t = installmd(name[i], pluginInfo);
-            await load(name[i], pluginInfo, func);
-        }
-        catch (err) {
-            log.err("Plugins(VBLN)", "Can't load \"" + name[i] + "\" with error: " + err)
-        }
-    }
+	//process.exit();
+	for (i = 0; i < name.length; i++) {
+		try {
+			let func = await getFileContent(name[i]);
+			if (!func) throw new Error("Can't load \"" + name[i] + "\" with error: " + err);
+			let pluginInfo = await evelStringInit(func, name[i]);
+			var t = installmd(name[i], pluginInfo);
+			await load(name[i], pluginInfo, func);
+		}
+		catch (err) {
+			log.err("Plugins(VBLN)", "Can't load \"" + name[i] + "\" with error: " + err)
+		}
+	}
 
-    /*if (!global.coreconfig.main_bot.developMode) {
+	/*if (!global.coreconfig.main_bot.developMode) {
         ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
         let listObb = fs.readdirSync(path.join(__dirname, "..", "..", "plugins", "obb"));
         for (let i of listObb)
@@ -138,97 +146,104 @@ async function loadPlugin() {
 
 
 async function load(file, pluginInfo, func, devmode) {
-    try {
-        if (pluginInfo.obb && (!fs.existsSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb)) || pluginInfo.version != global.data.pluginTemp[pluginInfo.pluginName])) {
-            console.warn(pluginInfo.pluginName, "Updating obb: " + pluginInfo.obb);
-            try{
-                if(fs.existsSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb))) fs.unlinkSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb));
-                await downloadfile(pluginInfo.obb + ".zip");
-                let zip = new AdmZip(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb + ".zip"));
-                zip.extractAllTo(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb), true);
-                fs.unlinkSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb + ".zip"));
-                console.warn(pluginInfo.pluginName, "Successfully installed obb " + pluginInfo.obb);
-            } catch (e){
-                console.error(pluginInfo.pluginName, "Can't install obb "+ pluginInfo.obb +": Does not exist in the database or has been corrupted!", e);
-            }
-            
-        }
-        let fullFunc = evelStringSync(func);
-        //var funcmain = require(path.join(__dirname, "..", "..", "plugins", file));
-        !global.plugins.VBLN.plugins ? global.plugins.VBLN.plugins = {} : "";
-        !global.plugins.VBLN.plugins[pluginInfo.pluginName] ? global.plugins.VBLN.plugins[pluginInfo.pluginName] = {
-            "author": pluginInfo.author,
-            "version": pluginInfo.version,
-            "loginFunc": fullFunc[pluginInfo.loginFunc],
-            "lang": false
-        } : "";
-        global.data.pluginTemp[pluginInfo.pluginName] = pluginInfo.version;
-        !global.plugins.VBLN.plugins.listen ? global.plugins.VBLN.plugins.listen = {
-            "lang": true
-        } : "";
+	try {
+		if (pluginInfo.obb && (!fs.existsSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb)) || pluginInfo.version != global.data.pluginTemp[pluginInfo.pluginName])) {
+			console.warn(pluginInfo.pluginName, "Updating obb: " + pluginInfo.obb);
+			try {
+				if (fs.existsSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb))) fs.unlinkSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb));
+				await downloadfile(pluginInfo.obb + ".zip");
+				let zip = new AdmZip(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb + ".zip"));
+				zip.extractAllTo(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb), true);
+				fs.unlinkSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb + ".zip"));
+				console.warn(pluginInfo.pluginName, "Successfully installed obb " + pluginInfo.obb);
+			} catch (e) {
+				console.error(pluginInfo.pluginName, "Can't install obb "+ pluginInfo.obb +": Does not exist in the database or has been corrupted!", e);
+			}
 
-        !global.plugins.VBLN.obb ? global.plugins.VBLN.obb = {} : "";
-        pluginInfo.obb ? global.plugins.VBLN.obb[pluginInfo.obb] = pluginInfo.pluginName : "";
+		}
+		let fullFunc = evelStringSync(func);
+		//var funcmain = require(path.join(__dirname, "..", "..", "plugins", file));
+		!global.plugins.VBLN.plugins ? global.plugins.VBLN.plugins = {}: "";
+		!global.plugins.VBLN.plugins[pluginInfo.pluginName] ? global.plugins.VBLN.plugins[pluginInfo.pluginName] = {
+			"author": pluginInfo.author,
+			"version": pluginInfo.version,
+			"loginFunc": fullFunc[pluginInfo.loginFunc],
+			"lang": false
+		}: "";
+		global.data.pluginTemp[pluginInfo.pluginName] = pluginInfo.version;
+		!global.plugins.VBLN.plugins.listen ? global.plugins.VBLN.plugins.listen = {
+			"lang": true
+		}: "";
 
-        for (var i in pluginInfo.commandList) {
-            !global.plugins.VBLN.command[i] ? global.plugins.VBLN.command[i] = {} : "";
-            !global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].namePlugin = pluginInfo.pluginName : "";
-            !global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].help = pluginInfo.commandList[i].help : "";
-            !global.plugins.VBLN.command[i].tag ? global.plugins.VBLN.command[i].tag = pluginInfo.commandList[i].tag : "";
-            !global.plugins.VBLN.command[i].main ? global.plugins.VBLN.command[i].main = func : "";
-            !global.plugins.VBLN.command[i].mainFunc ? global.plugins.VBLN.command[i].mainFunc = pluginInfo.commandList[i].mainFunc : "";
-        }
-        if (typeof pluginInfo.langMap == "object") {
-            if (global.coreconfig.main_bot.developMode) {
-                fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.langMap, null, 4), { mode: 0o666 });
-                global.plugins.VBLN.plugins[pluginInfo.pluginName].lang = true;
+		!global.plugins.VBLN.obb ? global.plugins.VBLN.obb = {}: "";
+		pluginInfo.obb ? global.plugins.VBLN.obb[pluginInfo.obb] = pluginInfo.pluginName: "";
 
-            }
-            else {
-                if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`))) {
-                    if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`)))
-                        fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.langMap, null, 4), { mode: 0o666 })
-                    else {
-                        fs.renameSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`), path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`))
-                        //Check lang.json file
-                        var langjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`)));
-                        for (let l in langjs)
-                            !pluginInfo.langMap[l] ? delete langjs[l] : "";
-                        //Check plugin
-                        for (let l in pluginInfo.langMap)
-                            !langjs[l] ? langjs[l] = pluginInfo.langMap[l] : "";
-                        fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(langjs, null, 4), { mode: 0o666 });
-                    }
-                } else {
-                    //Check lang.json file
-                    var langjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`)));
-                    for (let l in langjs)
-                        !pluginInfo.langMap[l] ? delete langjs[l] : "";
-                    //Check plugin
-                    for (let l in pluginInfo.langMap)
-                        !langjs[l] ? langjs[l] = pluginInfo.langMap[l] : "";
-                    fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(langjs, null, 4), { mode: 0o666 });
-                }
-                global.plugins.VBLN.plugins[pluginInfo.pluginName].lang = true;
-            }
-        }
-        if (typeof pluginInfo.chathook == "string") {
-            !global.chathook[pluginInfo.pluginName] ? global.chathook[pluginInfo.pluginName] = {
-                main: func,
-                func: pluginInfo.chathook
-            } : "";
-        }
-        global.coreconfig.main_bot.developMode ? log.log("Plugins(VBLN)", "Loaded devplugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author) : log.log("Plugins(VBLN)", "Loaded plugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author)
-    }
-    catch (err) {
-        log.err("Plugins(VBLN)", "Can't load \"" + file + "\" with error: " + err)
-    }
+		for (var i in pluginInfo.commandList) {
+			!global.plugins.VBLN.command[i] ? global.plugins.VBLN.command[i] = {}: "";
+			!global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].namePlugin = pluginInfo.pluginName: "";
+			!global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].help = pluginInfo.commandList[i].help: "";
+			!global.plugins.VBLN.command[i].tag ? global.plugins.VBLN.command[i].tag = pluginInfo.commandList[i].tag: "";
+			!global.plugins.VBLN.command[i].main ? global.plugins.VBLN.command[i].main = fullFunc: "";
+			!global.plugins.VBLN.command[i].mainFunc ? global.plugins.VBLN.command[i].mainFunc = pluginInfo.commandList[i].mainFunc: "";
+		}
+		if (typeof pluginInfo.langMap == "object") {
+			if (global.coreconfig.main_bot.developMode) {
+				fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.langMap, null, 4), {
+					mode: 0o666
+				});
+				global.plugins.VBLN.plugins[pluginInfo.pluginName].lang = true;
+
+			} else {
+				if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`))) {
+					if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`)))
+						fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.langMap, null, 4), {
+						mode: 0o666
+					})
+					else {
+						fs.renameSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`), path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`))
+						//Check lang.json file
+						var langjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`)));
+						for (let l in langjs)
+							!pluginInfo.langMap[l] ? delete langjs[l]: "";
+						//Check plugin
+						for (let l in pluginInfo.langMap)
+							!langjs[l] ? langjs[l] = pluginInfo.langMap[l]: "";
+						fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(langjs, null, 4), {
+							mode: 0o666
+						});
+					}
+				} else {
+					//Check lang.json file
+					var langjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`)));
+					for (let l in langjs)
+						!pluginInfo.langMap[l] ? delete langjs[l]: "";
+					//Check plugin
+					for (let l in pluginInfo.langMap)
+						!langjs[l] ? langjs[l] = pluginInfo.langMap[l]: "";
+					fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(langjs, null, 4), {
+						mode: 0o666
+					});
+				}
+				global.plugins.VBLN.plugins[pluginInfo.pluginName].lang = true;
+			}
+		}
+		if (typeof pluginInfo.chathook == "string") {
+			!global.chathook[pluginInfo.pluginName] ? global.chathook[pluginInfo.pluginName] = {
+				main: fullFunc,
+				func: pluginInfo.chathook
+			}: "";
+		}
+		global.coreconfig.main_bot.developMode ? log.log("Plugins(VBLN)", "Loaded devplugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author): log.log("Plugins(VBLN)", "Loaded plugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author)
+	}
+	catch (err) {
+		log.err("Plugins(VBLN)", "Can't load \"" + file + "\" with error: " + err)
+	}
 }
 
 function installmd(file, pluginInfo) {
-    if (typeof pluginInfo.nodeDepends == "object") {
-        for (var i in pluginInfo.nodeDepends) {
-            /*var ch = true;
+	if (typeof pluginInfo.nodeDepends == "object") {
+		for (var i in pluginInfo.nodeDepends) {
+			/*var ch = true;
             try{
                 var a = require(i)
             }catch (e){
@@ -236,115 +251,143 @@ function installmd(file, pluginInfo) {
                 ch = false
             }*/
 
-            //if (!ch) {
-            if (!fs.existsSync(path.join(__dirname, "..", "..", "node_modules", i, "package.json"))) {
+			//if (!ch) {
+			if (!fs.existsSync(path.join(__dirname, "..", "..", "node_modules", i, "package.json"))) {
 
-                log.warn("Plugins(VBLN)", "Installing Node_module \"" + i + "\" for plugin \"" + pluginInfo.pluginName + "\":\n");
-                if (pluginInfo.nodeDepends[i] != "") {
-                    cmd.execSync(`npm install --save ${i}@${pluginInfo.nodeDepends[i]}`, {
-                        stdio: "inherit",
-                        env: process.env,
-                        shell: true
-                    })
-                }
-                else {
-                    cmd.execSync(`npm install --save ${i}`, {
-                        stdio: "inherit",
-                        env: process.env,
-                        shell: true
-                    })
-                }
-            }
-        }
-    }
+				log.warn("Plugins(VBLN)", "Installing Node_module \"" + i + "\" for plugin \"" + pluginInfo.pluginName + "\":\n");
+				if (pluginInfo.nodeDepends[i] != "") {
+					cmd.execSync(`npm install --save ${i}@${pluginInfo.nodeDepends[i]}`, {
+						stdio: "inherit",
+						env: process.env,
+						shell: true
+					})
+				} else {
+					cmd.execSync(`npm install --save ${i}`, {
+						stdio: "inherit",
+						env: process.env,
+						shell: true
+					})
+				}
+			}
+		}
+	}
 }
 
 async function getFileContent(linkDir) {
-    try {
-        const response = await octokit.repos.getContent({
-            owner: "VangBanLaNhat",
-            repo: "VBLN-data",
-            path: "PluginStorage/" + linkDir,
-            ref: "main"
-        });
-        const content = Buffer.from(response.data.content, 'base64').toString();
-        //console.log(requireFromString(content, { globals: { global } }).init());
-        //console.log(response.data);
-        return content;
-    } catch (error) {
-        console.log(error);
-        return false;
-    }
+	try {
+		const response = await octokit.repos.getContent({
+			owner: "VangBanLaNhat",
+			repo: "VBLN-data",
+			path: "PluginStorage/" + linkDir,
+			ref: "main"
+		});
+		const content = Buffer.from(response.data.content, 'base64').toString();
+		//console.log(requireFromString(content, { globals: { global } }).init());
+		//console.log(response.data);
+		return content;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
 }
 
 async function downloadfile(linkDir) {
-    const response = await octokit.repos.getContent({
-        owner: "VangBanLaNhat",
-        repo: "VBLN-data",
-        path: "PluginStorage/obb/" + linkDir,
-        ref: "main"
-    });
-    //const content = Buffer.from(response.data.content, 'base64').toString();
+	const response = await octokit.repos.getContent({
+		owner: "VangBanLaNhat",
+		repo: "VBLN-data",
+		path: "PluginStorage/obb/" + linkDir,
+		ref: "main"
+	});
+	//const content = Buffer.from(response.data.content, 'base64').toString();
 
-    let url = response.data.download_url;
-    let name = path.join(__dirname, "..", "..", "plugins", "obb", response.data.name);
-    try {
-        const response = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'stream'
-        });
-        const writer = fs.createWriteStream(name);
-        response.data.pipe(writer);
-        await new Promise((resolve, reject) => {
-            writer.on('finish', resolve);
-            writer.on('error', reject);
-        });
-        //console.log('File has been downloaded successfully');
-    } catch (error) {
-        console.error(error);
-    }
+	let url = response.data.download_url;
+	let name = path.join(__dirname, "..", "..", "plugins", "obb", response.data.name);
+	try {
+		const response = await axios({
+			method: 'get',
+			url: url,
+			responseType: 'stream'
+		});
+		const writer = fs.createWriteStream(name);
+		response.data.pipe(writer);
+		await new Promise((resolve, reject) => {
+			writer.on('finish', resolve);
+			writer.on('error', reject);
+		});
+		//console.log('File has been downloaded successfully');
+	} catch (error) {
+		console.error(error);
+	}
 }
 
-async function evelString(str, linkDir) {
-    linkDir = linkDir ? linkDir : path.join(__dirname, "..", "..", "plugins");
-    return await requireFromString(str, {
-        useCurrentGlobal: true,
-        globals: {
-            __dirname: linkDir,
-            console: console,
-            clearInterval: clearInterval,
-            clearTimeout: clearTimeout,
-            setInterval: setInterval,
-            setTimeout: setTimeout,
-            global: globalC
-        }
-    });
+function evelString(str, fileName, dev) {
+	/*linkDir = linkDir ? linkDir: path.join(__dirname, "..", "..", "plugins");
+	return await requireFromString(str, {
+		__dirname: linkDir,
+		useCurrentGlobal: true,
+		globals: {
+			__dirname: linkDir,
+			console: console,
+			clearInterval: clearInterval,
+			clearTimeout: clearTimeout,
+			setInterval: setInterval,
+			setTimeout: setTimeout,
+			global: globalC
+		}
+	});*/
+	
+	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
+	
+	let nameEnc = (enc.md5(fileName))+".js";
+	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	
+	fs.writeFileSync(linkDir, str);
+	let res = (require(linkDir));
+	fs.unlinkSync(linkDir);
+	return res;
 }
 
-function evelStringSync(str, linkDir) {
-    linkDir = linkDir ? linkDir : path.join(__dirname, "..", "..", "plugins");
-    return requireFromString(str, {
-        useCurrentGlobal: true,
-        globals: {
-            __dirname: linkDir,
-            console: console,
-            clearInterval: clearInterval,
-            clearTimeout: clearTimeout,
-            setInterval: setInterval,
-            setTimeout: setTimeout,
-            data: global.data,
-            global: globalC
-        }
-    })
+async function evelStringSync(str, fileName, dev) {
+	/*linkDir = linkDir ? linkDir: path.join(__dirname, "..", "..", "plugins");
+	return requireFromString(str, {
+		__dirname: linkDir,
+		useCurrentGlobal: true,
+		globals: {
+			__dirname: linkDir,
+			console: console,
+			clearInterval: clearInterval,
+			clearTimeout: clearTimeout,
+			setInterval: setInterval,
+			setTimeout: setTimeout,
+			data: global.data,
+			global: globalC
+		}
+	})*/
+	
+	fileName = fileName ? fileName:(new Date()).getTime() + "";
+	
+	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
+	console.log(fileName)
+	let nameEnc = (enc.base64.encode(fileName))+".js";
+	console.log(nameEnc)
+	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	
+	fs.writeFileSync(linkDir, str);
+	let res = (require(linkDir));
+	fs.unlinkSync(linkDir);
+	return res;
 }
 
-async function evelStringInit(str, linkDir) {
-    linkDir = linkDir ? linkDir : path.join(__dirname, "..", "..", "plugins");
+async function evelStringInit(str, fileName, dev) {
+	//linkDir = linkDir ? linkDir : path.join(__dirname, "..", "..", "plugins");
+	/*
     globalC.process = global.process;
     return await requireFromString(str, {
+    	__dirname: linkDir,
         useCurrentGlobal: true,
-
+		filename: path.join(__dirname, "..", "..", "plugins", "temp.js"),
         plugins: globalC.plugins,
         globals: {
 
@@ -352,55 +395,67 @@ async function evelStringInit(str, linkDir) {
             __dirname: linkDir,
             plugins: globalC.plugins,
         }
-    }).init();
-    //return true;
+    }).init();*/
+	//return true;
+	fileName = fileName ? fileName:(new Date()).getTime() + "";
+	
+	if (dev) return await (require (path.join(__dirname, "..", "..", "plugins", fileName))).init();
+	
+	let nameEnc = (enc.md5(fileName))+".js";
+	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	
+	fs.writeFileSync(linkDir, str);
+	let res = await (require(linkDir)).init();
+	fs.unlinkSync(linkDir);
+	return res;
 }
 
 function streamToString(stream) {
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        stream.on('error', (err) => reject(err));
-        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    })
+	const chunks = [];
+	return new Promise((resolve, reject) => {
+		stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+		stream.on('error', (err) => reject(err));
+		stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+	})
 }
 
 function removeDir(path) {
-    if (fs.existsSync(path)) {
-        const files = fs.readdirSync(path)
+	if (fs.existsSync(path)) {
+		const files = fs.readdirSync(path)
 
-        if (files.length > 0) {
-            files.forEach(function (filename) {
-                if (fs.statSync(path + "/" + filename).isDirectory()) {
-                    removeDir(path + "/" + filename)
-                } else {
-                    fs.unlinkSync(path + "/" + filename)
-                }
-            })
-            fs.rmdirSync(path)
-        } else {
-            fs.rmdirSync(path)
-        }
-    } else {
-        console.log("Directory path not found.")
-    }
+		if (files.length > 0) {
+			files.forEach(function (filename) {
+				if (fs.statSync(path + "/" + filename).isDirectory()) {
+					removeDir(path + "/" + filename)
+				} else {
+					fs.unlinkSync(path + "/" + filename)
+				}
+			})
+			fs.rmdirSync(path)
+		} else {
+			fs.rmdirSync(path)
+		}
+	} else {
+		console.log("Directory path not found.")
+	}
 }
 
 function ensureExists(path, mask) {
-    if (typeof mask != 'number') {
-        mask = 0o777;
-    }
-    try {
-        fs.mkdirSync(path, {
-            mode: mask,
-            recursive: true
-        });
-        return;
-    } catch (ex) {
-        return {
-            err: ex
-        };
-    }
+	if (typeof mask != 'number') {
+		mask = 0o777;
+	}
+	try {
+		fs.mkdirSync(path, {
+			mode: mask,
+			recursive: true
+		});
+		return;
+	} catch (ex) {
+		return {
+			err: ex
+		};
+	}
 }
 
 module.exports = loadPlugin;
