@@ -1,8 +1,6 @@
 const axios = require('axios');
 const AdmZip = require("adm-zip");
-const {
-	requireFromString
-} = require('module-from-string');
+//const {requireFromString} = require('module-from-string');
 const enc = require("enc");
 const fs = require('fs');
 const path = require("path");
