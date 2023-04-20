@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const listen = require(path.join(__dirname, "listen.js"))
 var log = require(path.join(__dirname, "..", "util", "log.js"));
-var { requireFromString } = require('module-from-string');
+//var { requireFromString } = require('module-from-string');
 
 
 module.exports = async (appState, loginOptions) => {
