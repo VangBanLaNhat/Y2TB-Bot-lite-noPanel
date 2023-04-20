@@ -1,8 +1,8 @@
-var fs = require("fs");
+const fs = require("fs");
 const path = require("path");
 const process = require("process");
-var log = require(path.join(__dirname, "..", "util", "log.js"));
-var { requireFromString } = require('module-from-string');
+const log = require(path.join(__dirname, "..", "util", "log.js"));
+//var { requireFromString } = require('module-from-string');
 
 
 
