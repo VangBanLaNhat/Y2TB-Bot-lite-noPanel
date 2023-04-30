@@ -26,7 +26,7 @@ module.exports = async (appState, loginOptions) => {
         log.log("Manager","Login successfuly!");
         for(let i in global.plugins.VBLN.plugins){
             try{
-                await global.plugins.VBLN.plugins[i].loginFunc();
+                await global.plugins.VBLN.plugins[i].loginFunc(api);
             } catch(e){}
         }
         try{
