@@ -17,6 +17,8 @@ const octokit = new Octokit({
 });
 const log = require(path.join(__dirname, "..", "util", "log.js"));
 const scanDir = require(path.join(__dirname, "..", "util", "scanDir.js"));
+!global.temp ? global.temp = {}:"";
+!global.temp.loadPlugin ? global.temp.loadPlugin = {}:"";
 
 async function loadPlugin() {
 	!global.plugins.VBLN ? global.plugins.VBLN = {}: "";
@@ -39,7 +41,12 @@ async function loadPlugin() {
 					load(list[i], pluginInfo, func, true);
 				}
 				catch (err) {
-					log.err("Plugins(VBLN)", "Can't load \"" + list[i] + "\" with error: " + err)
+					log.err("Plugins(VBLN)", "Can't load \"" + list[i] + "\" with error: " + err);
+					!global.temp.loadPlugin.stderr ? global.temp.loadPlugin.stderr = []:"";
+					global.temp.loadPlugin.stderr.push({
+						plugin: list[i],
+						error: err
+					})
 				}
 
 			}
@@ -118,13 +125,21 @@ async function loadPlugin() {
 	for (i = 0; i < name.length; i++) {
 		try {
 			let func = await getFileContent(name[i]);
-			if (!func) throw new Error("Can't load \"" + name[i] + "\" with error: " + err);
+			if (!func) {
+				
+				throw new Error("Can't load \"" + name[i] + "\" with error: " + err);
+			}
 			let pluginInfo = await evelStringInit(func, name[i]);
 			var t = installmd(name[i], pluginInfo);
 			await load(name[i], pluginInfo, func);
 		}
 		catch (err) {
 			log.err("Plugins(VBLN)", "Can't load \"" + name[i] + "\" with error: " + err)
+			!global.temp.loadPlugin.stderr ? global.temp.loadPlugin.stderr = []:"";
+			global.temp.loadPlugin.stderr.push({
+				plugin: list[i],
+				error: err
+			})
 		}
 	}
 
@@ -156,6 +171,11 @@ async function load(file, pluginInfo, func, devmode) {
 				console.warn(pluginInfo.pluginName, "Successfully installed obb " + pluginInfo.obb);
 			} catch (e) {
 				console.error(pluginInfo.pluginName, "Can't install obb "+ pluginInfo.obb +": Does not exist in the database or has been corrupted!", e);
+				!global.temp.loadPlugin.stderr ? global.temp.loadPlugin.stderr = []:"";
+				global.temp.loadPlugin.stderr.push({
+					plugin: pluginInfo.pluginName,
+					error: "Can't install obb "+ pluginInfo.obb +": Does not exist in the database or has been corrupted!; "+e
+				})
 			}
 
 		}
@@ -231,10 +251,19 @@ async function load(file, pluginInfo, func, devmode) {
 				func: pluginInfo.chathook
 			}: "";
 		}
+		if(pluginInfo.onload){
+			//console.log(fullFunc);
+			fullFunc[pluginInfo.onload](pluginInfo);
+		}
 		global.coreconfig.main_bot.developMode ? log.log("Plugins(VBLN)", "Loaded devplugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author): log.log("Plugins(VBLN)", "Loaded plugin: " + pluginInfo.pluginName + " " + pluginInfo.version + " by " + pluginInfo.author)
 	}
 	catch (err) {
-		log.err("Plugins(VBLN)", "Can't load \"" + file + "\" with error: " + err)
+		log.err("Plugins(VBLN)", "Can't load \"" + file + "\" with error: " + err);
+		!global.temp.loadPlugin.stderr ? global.temp.loadPlugin.stderr = []:"";
+		global.temp.loadPlugin.stderr.push({
+			plugin: file,
+			error: err
+		})
 	}
 }
 
@@ -346,7 +375,7 @@ function evelString(str, fileName, dev) {
 	return res;
 }
 
-async function evelStringSync(str, fileName, dev) {
+function evelStringSync(str, fileName, dev) {
 	/*linkDir = linkDir ? linkDir: path.join(__dirname, "..", "..", "plugins");
 	return requireFromString(str, {
 		__dirname: linkDir,
