@@ -366,8 +366,8 @@ function evelString(str, fileName, dev) {
 	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
 	
 	let nameEnc = (enc.md5(fileName))+".js";
-	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
-	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	ensureExists(path.join(__dirname, "..", "..", "plugins"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", nameEnc);
 	
 	fs.writeFileSync(linkDir, str);
 	let res = (require(linkDir));
@@ -398,8 +398,8 @@ function evelStringSync(str, fileName, dev) {
 	//console.log(fileName)
 	let nameEnc = (enc.base64.encode(fileName))+".js";
 	//console.log(nameEnc)
-	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
-	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	ensureExists(path.join(__dirname, "..", "..", "plugins"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", nameEnc);
 	
 	fs.writeFileSync(linkDir, str);
 	let res = (require(linkDir));
@@ -429,8 +429,8 @@ async function evelStringInit(str, fileName, dev) {
 	if (dev) return await (require (path.join(__dirname, "..", "..", "plugins", fileName))).init();
 	
 	let nameEnc = (enc.md5(fileName))+".js";
-	ensureExists(path.join(__dirname, "..", "..", "plugins", "temp"))
-	let linkDir = path.join(__dirname, "..", "..", "plugins", "temp", nameEnc);
+	ensureExists(path.join(__dirname, "..", "..", "plugins"))
+	let linkDir = path.join(__dirname, "..", "..", "plugins", nameEnc);
 	
 	fs.writeFileSync(linkDir, str);
 	let res = await (require(linkDir)).init();
