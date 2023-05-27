@@ -35,7 +35,7 @@ async function loadPlugin() {
 			var check = path.join(__dirname, "..", "..", "plugins", list[i]);
 			if (!fs.lstatSync(check).isDirectory()) {
 				try {
-					let pluginInfo = await evelStringInit(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString(), list[i], true);
+					let pluginInfo = await evelStringSync(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString(), list[i], true).init();
 					var func = fs.readFileSync(path.join(__dirname, "..", "..", "plugins", list[i])).toString();
 					var t = installmd(list[i], pluginInfo);
 					load(list[i], pluginInfo, func, true);
@@ -129,7 +129,7 @@ async function loadPlugin() {
 				
 				throw new Error("Can't load \"" + name[i] + "\" with error: " + err);
 			}
-			let pluginInfo = await evelStringInit(func, name[i]);
+			let pluginInfo = await evelStringSync(func, name[i]).init();
 			var t = installmd(name[i], pluginInfo);
 			await load(name[i], pluginInfo, func);
 		}
@@ -142,7 +142,6 @@ async function loadPlugin() {
 			})
 		}
 	}
-
 	/*if (!global.coreconfig.main_bot.developMode) {
         ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
         let listObb = fs.readdirSync(path.join(__dirname, "..", "..", "plugins", "obb"));
@@ -156,7 +155,6 @@ async function loadPlugin() {
             };
     }*/
 }
-
 
 async function load(file, pluginInfo, func, devmode) {
 	try {
@@ -186,6 +184,7 @@ async function load(file, pluginInfo, func, devmode) {
 			"author": pluginInfo.author,
 			"version": pluginInfo.version,
 			"loginFunc": fullFunc[pluginInfo.loginFunc],
+			"fullFunc": fullFunc,
 			"lang": false
 		}: "";
 		global.data.pluginTemp[pluginInfo.pluginName] = pluginInfo.version;
@@ -201,7 +200,7 @@ async function load(file, pluginInfo, func, devmode) {
 			!global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].namePlugin = pluginInfo.pluginName: "";
 			!global.plugins.VBLN.command[i].help ? global.plugins.VBLN.command[i].help = pluginInfo.commandList[i].help: "";
 			!global.plugins.VBLN.command[i].tag ? global.plugins.VBLN.command[i].tag = pluginInfo.commandList[i].tag: "";
-			!global.plugins.VBLN.command[i].main ? global.plugins.VBLN.command[i].main = fullFunc: "";
+			//!global.plugins.VBLN.command[i].main ? global.plugins.VBLN.command[i].main = pluginInfo.pluginName: "";
 			!global.plugins.VBLN.command[i].mainFunc ? global.plugins.VBLN.command[i].mainFunc = pluginInfo.commandList[i].mainFunc: "";
 		}
 		if (typeof pluginInfo.langMap == "object") {
@@ -247,7 +246,7 @@ async function load(file, pluginInfo, func, devmode) {
 		}
 		if (typeof pluginInfo.chathook == "string") {
 			!global.chathook[pluginInfo.pluginName] ? global.chathook[pluginInfo.pluginName] = {
-				main: fullFunc,
+				main: pluginInfo.pluginName,
 				func: pluginInfo.chathook
 			}: "";
 		}
@@ -347,51 +346,7 @@ async function downloadfile(linkDir) {
 	}
 }
 
-function evelString(str, fileName, dev) {
-	/*linkDir = linkDir ? linkDir: path.join(__dirname, "..", "..", "plugins");
-	return await requireFromString(str, {
-		__dirname: linkDir,
-		useCurrentGlobal: true,
-		globals: {
-			__dirname: linkDir,
-			console: console,
-			clearInterval: clearInterval,
-			clearTimeout: clearTimeout,
-			setInterval: setInterval,
-			setTimeout: setTimeout,
-			global: globalC
-		}
-	});*/
-	
-	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
-	
-	let nameEnc = (enc.md5(fileName))+".js";
-	ensureExists(path.join(__dirname, "..", "..", "plugins"))
-	let linkDir = path.join(__dirname, "..", "..", "plugins", nameEnc);
-	
-	fs.writeFileSync(linkDir, str);
-	let res = (require(linkDir));
-	fs.unlinkSync(linkDir);
-	return res;
-}
-
 function evelStringSync(str, fileName, dev) {
-	/*linkDir = linkDir ? linkDir: path.join(__dirname, "..", "..", "plugins");
-	return requireFromString(str, {
-		__dirname: linkDir,
-		useCurrentGlobal: true,
-		globals: {
-			__dirname: linkDir,
-			console: console,
-			clearInterval: clearInterval,
-			clearTimeout: clearTimeout,
-			setInterval: setInterval,
-			setTimeout: setTimeout,
-			data: global.data,
-			global: globalC
-		}
-	})*/
-	
 	fileName = fileName ? fileName:(new Date()).getTime() + "";
 	
 	if (dev) return (require (path.join(__dirname, "..", "..", "plugins", fileName)));
@@ -403,37 +358,6 @@ function evelStringSync(str, fileName, dev) {
 	
 	fs.writeFileSync(linkDir, str);
 	let res = (require(linkDir));
-	fs.unlinkSync(linkDir);
-	return res;
-}
-
-async function evelStringInit(str, fileName, dev) {
-	//linkDir = linkDir ? linkDir : path.join(__dirname, "..", "..", "plugins");
-	/*
-    globalC.process = global.process;
-    return await requireFromString(str, {
-    	__dirname: linkDir,
-        useCurrentGlobal: true,
-		filename: path.join(__dirname, "..", "..", "plugins", "temp.js"),
-        plugins: globalC.plugins,
-        globals: {
-
-            global,
-            __dirname: linkDir,
-            plugins: globalC.plugins,
-        }
-    }).init();*/
-	//return true;
-	fileName = fileName ? fileName:(new Date()).getTime() + "";
-	
-	if (dev) return await (require (path.join(__dirname, "..", "..", "plugins", fileName))).init();
-	
-	let nameEnc = (enc.md5(fileName))+".js";
-	ensureExists(path.join(__dirname, "..", "..", "plugins"))
-	let linkDir = path.join(__dirname, "..", "..", "plugins", nameEnc);
-	
-	fs.writeFileSync(linkDir, str);
-	let res = await (require(linkDir)).init();
 	fs.unlinkSync(linkDir);
 	return res;
 }
