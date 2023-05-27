@@ -27,6 +27,7 @@ module.exports = async (appState, loginOptions) => {
         for(let i in global.plugins.VBLN.plugins){
             try{
                 await global.plugins.VBLN.plugins[i].loginFunc(api);
+                delete global.plugins.VBLN.plugins[i].loginFunc;
             } catch(e){}
         }
         try{
