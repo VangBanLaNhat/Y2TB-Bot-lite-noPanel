@@ -158,6 +158,8 @@ async function loadPlugin() {
 
 async function load(file, pluginInfo, func, devmode) {
 	try {
+		//Load obb
+		
 		if (pluginInfo.obb && (!fs.existsSync(path.join(__dirname, "..", "..", "plugins", "obb", pluginInfo.obb)) || pluginInfo.version != global.data.pluginTemp[pluginInfo.pluginName])) {
 			console.warn(pluginInfo.pluginName, "Updating obb: " + pluginInfo.obb);
 			try {
@@ -175,10 +177,14 @@ async function load(file, pluginInfo, func, devmode) {
 					error: "Can't install obb "+ pluginInfo.obb +": Does not exist in the database or has been corrupted!; "+e
 				})
 			}
-
 		}
+		
+		//Require plugin
+		
 		let fullFunc = evelStringSync(func);
-		//var funcmain = require(path.join(__dirname, "..", "..", "plugins", file));
+		
+		//Push plugin info to global
+		
 		!global.plugins.VBLN.plugins ? global.plugins.VBLN.plugins = {}: "";
 		!global.plugins.VBLN.plugins[pluginInfo.pluginName] ? global.plugins.VBLN.plugins[pluginInfo.pluginName] = {
 			"author": pluginInfo.author,
@@ -203,6 +209,9 @@ async function load(file, pluginInfo, func, devmode) {
 			//!global.plugins.VBLN.command[i].main ? global.plugins.VBLN.command[i].main = pluginInfo.pluginName: "";
 			!global.plugins.VBLN.command[i].mainFunc ? global.plugins.VBLN.command[i].mainFunc = pluginInfo.commandList[i].mainFunc: "";
 		}
+		
+		//Load language 
+		
 		if (typeof pluginInfo.langMap == "object") {
 			if (global.coreconfig.main_bot.developMode) {
 				fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.langMap, null, 4), {
@@ -244,6 +253,53 @@ async function load(file, pluginInfo, func, devmode) {
 				global.plugins.VBLN.plugins[pluginInfo.pluginName].lang = true;
 			}
 		}
+		
+		//Load plugin config
+		
+		if (typeof pluginInfo.config == "object") {
+			ensureExists(path.join(__dirname, "..", "..", "udata", "Plugins config"));
+			if (global.coreconfig.main_bot.developMode) {
+				fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.config, null, 4), {
+					mode: 0o666
+				});
+				global.plugins.VBLN.plugins[pluginInfo.pluginName].config = true;
+			} else {
+				if (!fs.existsSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`))) {
+					if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`)))
+						fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.config, null, 4), {
+						mode: 0o666
+					})
+					else {
+						fs.renameSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`), path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`))
+						//Check config.json file
+						var configjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`)));
+						for (let l in configjs)
+							!pluginInfo.config[l] ? delete configjs[l]: "";
+						//Check plugin
+						for (let l in pluginInfo.config)
+							!configjs[l] ? configjs[l] = pluginInfo.config[l]: "";
+						fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(configjs, null, 4), {
+							mode: 0o666
+						});
+					}
+				} else {
+					//Check config.json file
+					var configjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`)));
+					for (let l in configjs)
+						!pluginInfo.config[l] ? delete configjs[l]: "";
+					//Check plugin
+					for (let l in pluginInfo.config)
+						!configjs[l] ? configjs[l] = pluginInfo.config[l]: "";
+					fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(configjs, null, 4), {
+						mode: 0o666
+					});
+				}
+				global.plugins.VBLN.plugins[pluginInfo.pluginName].config = true;
+			}
+		}
+		
+		//Load chathook
+		
 		if (typeof pluginInfo.chathook == "string") {
 			!global.chathook[pluginInfo.pluginName] ? global.chathook[pluginInfo.pluginName] = {
 				main: pluginInfo.pluginName,
