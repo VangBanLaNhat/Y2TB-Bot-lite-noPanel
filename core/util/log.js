@@ -134,9 +134,18 @@ function blank(){
 	console.logg("\r");
 }
 
+function sync(){
+	console.logg = console.log;
+	console.log = log;
+	console.error = err;
+	console.warn = warn;
+	console.blank = blank;
+}
+
 module.exports = {
     log,
     err,
 	warn,
-	blank
+	blank,
+	sync
 }
