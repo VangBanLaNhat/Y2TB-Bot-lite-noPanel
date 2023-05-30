@@ -6,13 +6,8 @@ const path = require("path");
 const login = require("fca-unofficial");
 const readline = require("readline");
 var lx = require("luxon");
-var log = require("./core/util/log.js");
+var log = require("./core/util/log.js"); log.sync();
 var scanDir = require("./core/util/scanDir.js");
-console.logg = console.log;
-console.log = log.log;
-console.error = log.err;
-console.warn = log.warn;
-console.blank = log.blank;
 
 //Write logs
 
