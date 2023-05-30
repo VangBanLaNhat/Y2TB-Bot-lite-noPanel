@@ -3,20 +3,6 @@ const path = require("path");
 const process = require("process");
 const log = require(path.join(__dirname, "..", "util", "log.js"));
 
-var langMap = {
-    "exitCM": {
-        "desc": "Exit command",
-        "vi_VN": "Lệnh không tồn tại! Vui lòng sử dụng lệnh \"{0}help [Trang số]\" để xem các lệnh hiện có",
-        "en_US": "Command does not exist!  Please use the command \"{0}help [Page Number]\" to view the available commands",
-        "args": {
-            "{0}": {
-                "vi_VN": "Prefix",
-                "en_US": "Prefix"
-            }
-        }
-    }
-}
-
 async function listen(err, event, api) {
     if (!event) return;
     if (!event.threadID || !event.senderID) return;
@@ -44,7 +30,6 @@ async function listen(err, event, api) {
             break;
     }
 
-    addLang();
     if (checkList(event.senderID, event.threadID)) mess(event, api);
 }
 
@@ -70,7 +55,15 @@ async function mess(event, api) {
                     let mainFunc = global.plugins[i].plugins[name].fullFunc;
                     let func = global.plugins[i].command[ms[0]].mainFunc;
                     
-                    await mainFunc[func](event, api);
+                    let adv = {
+                    	pluginName: name,
+                    	lang: global.lang[name],
+                    	iso639: global.config.bot_info.lang,
+                    	config: global.config[name],
+                    	replaceMap: replaceMap
+                    };
+                    
+                    await mainFunc[func](event, api, adv);
                 }
                 catch (err) {
                     log.err(global.plugins[i].command[ms[0]].namePlugin, err)
@@ -82,7 +75,8 @@ async function mess(event, api) {
             }
         }
         if (!check) {
-            var rt = global.lang.listen.exitCM[global.config.bot_info.lang].replace("{0}", global.config.facebook.prefix)
+        	let rt = "Please install the “Help” plugin to see the available commands!"
+        	if(global.lang["Help"]) rt = global.lang["Help"].exitCM[global.config.bot_info.lang].replace("{0}", global.config.facebook.prefix)
             api.sendMessage(rt, event.threadID, event.messageID);
         }
     }
@@ -99,7 +93,15 @@ async function chathook(event, api) {
             let mainFunc = global.plugins.VBLN.plugins[name].fullFunc
             var func = global.chathook[i].func;
             
-            mainFunc[func](event, api);
+            let adv = {
+            	pluginName: name,
+            	lang: global.lang[name],
+            	iso639: global.config.bot_info.lang,
+            	config: global.config[name],
+            	replaceMap: replaceMap
+            };
+            
+            mainFunc[func](event, api, adv);
         }
         catch (err) {
             log.err(i, err);
@@ -120,11 +122,10 @@ function checkList(uid, tid) {
     return true;
 }
 
-function addLang() {
-    !global.lang.listen ? global.lang.listen = langMap : ""
-    if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", `listen.json`))) {
-        fs.writeFileSync(path.join(__dirname, "..", "..", "lang", `listen.json`), JSON.stringify(langMap, null, 4), { mode: 0o666 });
-    }
+function replaceMap(str, map){
+	for(let i in map)
+		str = str.replaceAll(i, map[i]);
+	return str;
 }
 
 module.exports = listen;

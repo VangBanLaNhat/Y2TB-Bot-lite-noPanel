@@ -3,8 +3,6 @@ const fs = require("fs");
 const path = require("path");
 const listen = require(path.join(__dirname, "listen.js"))
 var log = require(path.join(__dirname, "..", "util", "log.js"));
-//var { requireFromString } = require('module-from-string');
-
 
 module.exports = async (appState, loginOptions) => {
     var opts = loginOptions;
@@ -26,7 +24,14 @@ module.exports = async (appState, loginOptions) => {
         log.log("Manager","Login successfuly!");
         for(let i in global.plugins.VBLN.plugins){
             try{
-                await global.plugins.VBLN.plugins[i].loginFunc(api);
+            	let adv = {
+            		pluginName: i,
+            		lang: global.lang[i],
+            		iso639: global.config.bot_info.lang,
+            		config: global.config[i],
+            		replaceMap: replaceMap
+            	};
+                await global.plugins.VBLN.plugins[i].loginFunc(api, adv);
                 delete global.plugins.VBLN.plugins[i].loginFunc;
             } catch(e){}
         }
@@ -36,4 +41,10 @@ module.exports = async (appState, loginOptions) => {
 		  });
         } catch (e) {/*console.error("ListenMqtt", e)*/};
     })
+}
+
+function replaceMap(str, map){
+	for(let i in map)
+		str = str.replaceAll(i, map[i]);
+	return str;
 }
