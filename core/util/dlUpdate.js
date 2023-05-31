@@ -19,8 +19,8 @@ const save = {
 
 async function main() {
 	//let t;
-	let lk = "VangBanLaNhat/VangBanLaNhat-Bot"
-	let t = await git('github:VangBanLaNhat/VBLNBot', 'temp', function (err) {
+	let lk = "VangBanLaNhat/Y2TB-Bot"
+	let t = await git('github:VangBanLaNhat/Y2TBBot', 'temp', function (err) {
 		console.log(err ? 'Error' : 'Success');
 		// bcccct =1;
 		if(err) return console.log(err); //code tiep di, t đang cài cho Dung cái thoi =)) dạ :))))

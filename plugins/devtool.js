@@ -35,8 +35,8 @@ function init(){
             },
             "notEnoughParams":{
                 "desc": "lang khi bot nhận lệnh devupload mà không đủ tham số",
-                "vi_VN": "Thiếu Tham số! hãy cung cấp đủ tên tài khoản, mật khẩu, tên file plugin theo cú pháp {0}devupload <tên tài khoản> <mật khẩu> <tên file plugin>! Nếu chưa có tài khoản hãy liên lạc với Admin VBLN để mở tài khoản.",
-                "en_US": "Not enough params! Please provide your username, password and plugin path according to the syntax {0}devupload <username> <password> <plugin path>. If you don't have an account, please talk to VBLN Admins to register.",
+                "vi_VN": "Thiếu Tham số! hãy cung cấp đủ tên tài khoản, mật khẩu, tên file plugin theo cú pháp {0}devupload <tên tài khoản> <mật khẩu> <tên file plugin>! Nếu chưa có tài khoản hãy liên lạc với Admin Y2TB để mở tài khoản.",
+                "en_US": "Not enough params! Please provide your username, password and plugin path according to the syntax {0}devupload <username> <password> <plugin path>. If you don't have an account, please talk to Y2TB Admins to register.",
                 "args": {
                     "{0}": {
                         "vi_VN": "prefix của bot",
@@ -46,14 +46,14 @@ function init(){
             },
             "badUsername":{
                 "desc": "lang khi bot nhận lệnh devlogin và tên tài khoản không tồn tại",
-                "vi_VN": "Tên tài khoản không tồn tại. Nếu chưa có tài khoản hãy liên lạc với Admin VBLN để mở tài khoản.",
-                "en_US": "Username not exist! If you don't have an account, please talk to VBLN Admins to register.",
+                "vi_VN": "Tên tài khoản không tồn tại. Nếu chưa có tài khoản hãy liên lạc với Admin Y2TB để mở tài khoản.",
+                "en_US": "Username not exist! If you don't have an account, please talk to Y2TB Admins to register.",
                 "args": {}
             },
             "badPassword":{
                 "desc": "lang khi bot nhận lệnh devlogin và mật khẩu không đúng",
-                "vi_VN": "Mật khẩu không đúng. Nếu quên mật khẩu hãy liên lạc với Admin VBLN để thay đổi.",
-                "en_US": "Incorrect password! If you forgot the password, please talk to VBLN Admins to change.",
+                "vi_VN": "Mật khẩu không đúng. Nếu quên mật khẩu hãy liên lạc với Admin Y2TB để thay đổi.",
+                "en_US": "Incorrect password! If you forgot the password, please talk to Y2TB Admins to change.",
                 "args": {}
             },
 			"blankPluginPath":{

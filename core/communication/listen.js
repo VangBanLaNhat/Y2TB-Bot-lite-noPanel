@@ -90,7 +90,7 @@ async function chathook(event, api) {
     for (var i in global.chathook) {
         try {
         	let name = global.chathook[i].main;
-            let mainFunc = global.plugins.VBLN.plugins[name].fullFunc
+            let mainFunc = global.plugins.Y2TB.plugins[name].fullFunc
             var func = global.chathook[i].func;
             
             let adv = {

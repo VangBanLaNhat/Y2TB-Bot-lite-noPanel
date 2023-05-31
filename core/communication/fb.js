@@ -22,7 +22,7 @@ module.exports = async (appState, loginOptions) => {
 
 
         log.log("Manager","Login successfuly!");
-        for(let i in global.plugins.VBLN.plugins){
+        for(let i in global.plugins.Y2TB.plugins){
             try{
             	let adv = {
             		pluginName: i,
@@ -31,8 +31,8 @@ module.exports = async (appState, loginOptions) => {
             		config: global.config[i],
             		replaceMap: replaceMap
             	};
-                await global.plugins.VBLN.plugins[i].loginFunc(api, adv);
-                delete global.plugins.VBLN.plugins[i].loginFunc;
+                await global.plugins.Y2TB.plugins[i].loginFunc(api, adv);
+                delete global.plugins.Y2TB.plugins[i].loginFunc;
             } catch(e){}
         }
         try{

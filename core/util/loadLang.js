@@ -10,15 +10,15 @@ function loadLang() {
     ensureExists(path.join(dirLang, "backup"));
     var listLang = scanDir(".json", dirLang);
     var plugins = [];
-    /*Object.keys(global.plugins.VBLN.command).forEach(x => {
-        plugins.indexOf(global.plugins.VBLN.command[x].namePlugin) == -1 ? plugins.push(global.plugins.VBLN.command[x].namePlugin) : "";
+    /*Object.keys(global.plugins.Y2TB.command).forEach(x => {
+        plugins.indexOf(global.plugins.Y2TB.command[x].namePlugin) == -1 ? plugins.push(global.plugins.Y2TB.command[x].namePlugin) : "";
     });*/
     for (var i = 0; i < listLang.length; i++) {
         var pluginName = listLang[i].split(".")[0];
         //pluginName.splice(pluginName.length-1,1);
         //console.log(pluginName);
         //pluginName = pluginName.toString(".");
-        if(global.plugins.VBLN.plugins[pluginName] && global.plugins.VBLN.plugins[pluginName].lang){
+        if(global.plugins.Y2TB.plugins[pluginName] && global.plugins.Y2TB.plugins[pluginName].lang){
             try{
                 var lang = JSON.parse(stripBom(fs.readFileSync(path.join(dirLang, listLang[i]), {encoding: "utf8"})));
                 !global.lang[pluginName] ? global.lang[pluginName] = lang:"";

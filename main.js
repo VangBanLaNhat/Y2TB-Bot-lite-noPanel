@@ -80,9 +80,9 @@ console.blank = log.blank;
 
   //Check Update
   let text;
-  //https://raw.githubusercontent.com/VangBanLaNhat/VangBanLaNhat-Bot/master/package.json
-    //https://raw.githubusercontent.com/VangBanLaNhat/VBLNBot/main/package.json
-    let link = "https://raw.githubusercontent.com/VangBanLaNhat/VangBanLaNhat-Bot/master/package.json"
+  //https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot/master/package.json
+    //https://raw.githubusercontent.com/VangBanLaNhat/Y2TBBot/main/package.json
+    let link = "https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot/master/package.json"
   try{
     let vs = await fetch(link);
     text = await vs.text();
@@ -90,7 +90,7 @@ console.blank = log.blank;
     text == "404: Not Found";
   };
   if(text == "404: Not Found"){
-    if(link=="https://raw.githubusercontent.com/VangBanLaNhat/VBLNBot/main/package.json") return console.error("UPDATE", "Can't connect to Github. Existing...") //text = "{\"version\": \"1.0.0\"}";
+    if(link=="https://raw.githubusercontent.com/VangBanLaNhat/Y2TBBot/main/package.json") return console.error("UPDATE", "Can't connect to Github. Existing...") //text = "{\"version\": \"1.0.0\"}";
     return await loader(true);
   }
   while(text.indexOf("\\n\\r") != -1){
@@ -98,8 +98,8 @@ console.blank = log.blank;
   }
   let json = JSON.parse(text)
   if(json.version != "1.0.0"){
-    let lk = "VangBanLaNhat/VangBanLaNhat-Bot"
-    git('github:VangBanLaNhat/VBLNBot', 'temp', async function (err) {
+    let lk = "VangBanLaNhat/Y2TB-Bot"
+    git('github:VangBanLaNhat/Y2TBBot', 'temp', async function (err) {
       //console.log(err ? 'Error' : 'Success');
       // bcccct =1;
       if(err) return console.log(err); //code tiep di, t đang cài cho Dung cái thoi =)) dạ :))))

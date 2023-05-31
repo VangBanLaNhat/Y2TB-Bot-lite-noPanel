@@ -12,7 +12,7 @@ function loadConfig() {
     var plugins = [];
     for (var i = 0; i < listConfig.length; i++) {
         var pluginName = listConfig[i].split(".json")[0];
-        if(global.plugins.VBLN.plugins[pluginName] && global.plugins.VBLN.plugins[pluginName].config){
+        if(global.plugins.Y2TB.plugins[pluginName] && global.plugins.Y2TB.plugins[pluginName].config){
             try{
                 var config = JSON.parse(stripBom(fs.readFileSync(path.join(dirConfig, listConfig[i]), {encoding: "utf8"})));
                 !global.config[pluginName] ? global.config[pluginName] = config:"";
