@@ -7,6 +7,7 @@ const login = require("fca-unofficial");
 const readline = require("readline");
 const axios = require("axios");
 const AdmZip = require("adm-zip");
+const cmd = require('child_process');
 var lx = require("luxon");
 var log = require("./core/util/log.js"); log.sync();
 var scanDir = require("./core/util/scanDir.js");
@@ -39,9 +40,18 @@ for (var i = 0; i < ll.length; i++) {
 		process.exit(504);
 	}
 
-	if (vern == verg) console.log("Update", "Awesome, you're on the latest version!");
-	else {
-		console.log("Update", "The new update has been discovered. Proceed to download the imported version...");
+	if (fs.existsSync(path.join(__dirname, "update"))) {
+		console.warn("Update", "Proceed to update node_modules...")
+		deleteFolderRecursive(path.join(__dirname, "update"));
+		cmd.execSync(`npm install`, {
+			stdio: "inherit",
+			env: process.env,
+			shell: true
+		})
+	}
+
+	if (vern != verg) {
+		console.warn("Update", "The new update has been discovered. Proceed to download the imported version...");
 		let pathFile = path.join(__dirname, "update");
 		try {
 			await downloadUpdate(pathFile);
@@ -66,8 +76,8 @@ for (var i = 0; i < ll.length; i++) {
 		let listFile = fs.readdirSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main"));
 		// delete require.cache[require.resolve("./core/util/log.js")];
 		// delete require.cache[require.resolve("./core/util/scanDir.js")]
-		for(let i of listFile)
-			if(minus.indexOf(i) == -1) {
+		for (let i of listFile)
+			if (minus.indexOf(i) == -1) {
 				//fs.unlinkSync(path.join(pathFile, "..", i));
 				//fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
 				if (!fs.lstatSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i)).isFile()) copyFolder(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
@@ -76,7 +86,9 @@ for (var i = 0; i < ll.length; i++) {
 		console.log("Update", "Complete update. Proceed to restart...");
 		process.exit(7378278);
 
-	}
+	} else console.log("Update", "Awesome, you're on the latest version!");
+
+
 
 	//https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip
 
@@ -214,7 +226,7 @@ process.on('exit', function (code) {
 
 async function downloadUpdate(pathFile) {
 	let url = 'https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip';
-	
+
 	ensureExists(pathFile);
 
 	try {
@@ -255,32 +267,43 @@ function extractZip(filePath, destinationPath) {
 
 function copyFolder(sourcePath, destinationPath) {
 	try {
-	  // Create the destination folder if it doesn't exist
-	  ensureExists(destinationPath);
-  
-	  // Read the contents of the source folder
-	  const files = fs.readdirSync(sourcePath);
-  
-	  // Iterate through each file and subdirectory
-	  files.forEach((file) => {
-		const sourceFile = path.join(sourcePath, file);
-		const destinationFile = path.join(destinationPath, file);
-  
-		// Check if the item is a file or directory
-		if (fs.lstatSync(sourceFile).isFile()) {
-		  // If it's a file, copy it to the destination
-		  fs.copyFileSync(sourceFile, destinationFile);
-		} else {
-		  // If it's a directory, recursively copy it
-		  copyFolder(sourceFile, destinationFile);
-		}
-	  });
-  
-	  //console.log('Folder copied successfully.');
+		ensureExists(destinationPath);
+
+		const files = fs.readdirSync(sourcePath);
+
+		files.forEach((file) => {
+			const sourceFile = path.join(sourcePath, file);
+			const destinationFile = path.join(destinationPath, file);
+
+			if (fs.lstatSync(sourceFile).isFile()) {
+				fs.copyFileSync(sourceFile, destinationFile);
+			} else {
+				copyFolder(sourceFile, destinationFile);
+			}
+		});
+
 	} catch (error) {
-	  console.error("Update", 'Error copying folder: '+ error);
+		console.error("Update", 'Error copying folder: ' + error);
 	}
-  }
+}
+
+function deleteFolderRecursive(folderPath) {
+	if (fs.existsSync(folderPath)) {
+		fs.readdirSync(folderPath).forEach((file) => {
+			const curPath = folderPath + '/' + file;
+
+			if (fs.lstatSync(curPath).isDirectory()) {
+				deleteFolderRecursive(curPath);
+			} else {
+				fs.unlinkSync(curPath);
+			}
+		});
+
+		fs.rmdirSync(folderPath);
+	} else {
+		console.log('Folder does not exist.');
+	}
+}
 
 function ensureExists(path, mask) {
 	if (typeof mask != 'number') {
