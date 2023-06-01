@@ -78,8 +78,6 @@ for (var i = 0; i < ll.length; i++) {
 		// delete require.cache[require.resolve("./core/util/scanDir.js")]
 		for (let i of listFile)
 			if (minus.indexOf(i) == -1) {
-				//fs.unlinkSync(path.join(pathFile, "..", i));
-				//fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
 				if (!fs.lstatSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i)).isFile()) copyFolder(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
 				else fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
 			}
@@ -87,10 +85,6 @@ for (var i = 0; i < ll.length; i++) {
 		process.exit(7378278);
 
 	} else console.log("Update", "Awesome, you're on the latest version!");
-
-
-
-	//https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip
 
 	//globalC = Object.assign({}, global);
 	log.blank();
