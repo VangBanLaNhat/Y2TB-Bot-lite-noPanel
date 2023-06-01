@@ -71,7 +71,7 @@ for (var i = 0; i < ll.length; i++) {
 			process.exit(504);
 		}
 
-		let minus = ["tool", ".gitattributes", ".gitignore"];
+		let minus = ["tool", "plugins"];
 
 		let listFile = fs.readdirSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main"));
 		// delete require.cache[require.resolve("./core/util/log.js")];
