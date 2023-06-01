@@ -12,9 +12,7 @@ const {
 const {
 	Octokit
 } = require("@octokit/rest");
-const octokit = new Octokit({
-	auth: "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"
-});
+const octokit = new Octokit({});
 const log = require(path.join(__dirname, "..", "util", "log.js"));
 const scanDir = require(path.join(__dirname, "..", "util", "scanDir.js"));
 !global.temp ? global.temp = {}:"";

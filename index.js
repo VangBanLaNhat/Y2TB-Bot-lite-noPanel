@@ -5,6 +5,8 @@ const fs = require("fs");
 const path = require("path");
 const login = require("fca-unofficial");
 const readline = require("readline");
+const axios = require("axios");
+const AdmZip = require("adm-zip");
 var lx = require("luxon");
 var log = require("./core/util/log.js"); log.sync();
 var scanDir = require("./core/util/scanDir.js");
@@ -25,7 +27,59 @@ for (var i = 0; i < ll.length; i++) {
 
 //Main function
 
-(async ()=>{
+(async () => {
+
+	//Main update
+	console.log("Update", "Checking update...");
+	let vern = (JSON.parse(fs.readFileSync(path.join(__dirname, "package.json")))).version;
+	try {
+		var verg = (await axios.get('https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/main/package.json')).data.version;
+	} catch (e) {
+		console.error("Update", e, "Failed to connect to to the server!");
+		process.exit(504);
+	}
+
+	if (vern == verg) console.log("Update", "Awesome, you're on the latest version!");
+	else {
+		console.log("Update", "The new update has been discovered. Proceed to download the imported version...");
+		let pathFile = path.join(__dirname, "update");
+		try {
+			await downloadUpdate(pathFile);
+			console.log("Update", 'Download the update completed!');
+		} catch (error) {
+			console.error("Update", 'Error generation during the download process: ' + error);
+			process.exit(504);
+		}
+
+		try {
+			await extractZip(path.join(pathFile, "update.zip"), pathFile);
+			fs.unlinkSync(path.join(pathFile, "update.zip"));
+			console.log("Update", 'Extraction completed!');
+		} catch (error) {
+			fs.unlinkSync(path.join(pathFile, "update.zip"));
+			console.error("Update", error);
+			process.exit(504);
+		}
+
+		let minus = ["tool", ".gitattributes", ".gitignore"];
+
+		let listFile = fs.readdirSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main"));
+		// delete require.cache[require.resolve("./core/util/log.js")];
+		// delete require.cache[require.resolve("./core/util/scanDir.js")]
+		for(let i of listFile)
+			if(minus.indexOf(i) == -1) {
+				//fs.unlinkSync(path.join(pathFile, "..", i));
+				//fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
+				if (!fs.lstatSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i)).isFile()) copyFolder(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
+				else fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
+			}
+		console.log("Update", "Complete update. Proceed to restart...");
+		process.exit(7378278);
+
+	}
+
+	//https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip
+
 	//globalC = Object.assign({}, global);
 	log.blank();
 	log.log("Config", "Loading config...");
@@ -43,7 +97,7 @@ for (var i = 0; i < ll.length; i++) {
 	}
 
 	//data loader
-	
+
 	log.log("Data", "Loading data...");
 	try {
 		require("./core/util/getData.js").getdt();
@@ -60,12 +114,12 @@ for (var i = 0; i < ll.length; i++) {
 			fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(global.data, null, 4), { mode: 0o666 });
 		}
 		catch (err) {
-			if(err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
+			if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
 		}
 	}, global.coreconfig.main_bot.dataSaveTime * 1000)
 
 	//loadPlugins
-	
+
 	log.log("Plugin", "Loading Plugins...")
 	try {
 		ensureExists(path.join(__dirname, "lang"));
@@ -76,17 +130,17 @@ for (var i = 0; i < ll.length; i++) {
 	}
 
 	//loadLang
-	
+
 	log.log("Languages", "Loading Languages...");
 	require("./core/util/loadLang.js")();
-	
+
 	//Load Config of plugins
-	
+
 	log.log("Config", "Loading config for plugins...");
 	require("./core/util/loadConfig.js")();
 
 	//credentials loader
-	
+
 	let fbCredentials = {
 		email: global.config.facebook.FBemail,
 		password: global.config.facebook.FBpassword
@@ -157,6 +211,76 @@ process.on('exit', function (code) {
 		log.err("Data", "Can't auto save data with error: " + err);
 	}
 });
+
+async function downloadUpdate(pathFile) {
+	let url = 'https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip';
+	
+	ensureExists(pathFile);
+
+	try {
+		const response = await axios({
+			url,
+			method: 'GET',
+			responseType: 'stream'
+		});
+
+		const writer = fs.createWriteStream(path.join(pathFile, "update.zip"));
+
+		response.data.pipe(writer);
+
+		return new Promise((resolve, reject) => {
+			writer.on('finish', resolve);
+			writer.on('error', reject);
+		});
+	} catch (error) {
+		console.error("Update", 'Error downloading file: ' + error);
+		process.exit(504);
+	}
+}
+
+function extractZip(filePath, destinationPath) {
+	return new Promise((resolve, reject) => {
+		const zip = new AdmZip(filePath);
+		zip.extractAllToAsync(destinationPath, true, (error) => {
+			if (error) {
+				console.error('Error extracting zip file:', error);
+				reject(error);
+				process.exit(504);
+			} else {
+				resolve();
+			}
+		});
+	});
+}
+
+function copyFolder(sourcePath, destinationPath) {
+	try {
+	  // Create the destination folder if it doesn't exist
+	  ensureExists(destinationPath);
+  
+	  // Read the contents of the source folder
+	  const files = fs.readdirSync(sourcePath);
+  
+	  // Iterate through each file and subdirectory
+	  files.forEach((file) => {
+		const sourceFile = path.join(sourcePath, file);
+		const destinationFile = path.join(destinationPath, file);
+  
+		// Check if the item is a file or directory
+		if (fs.lstatSync(sourceFile).isFile()) {
+		  // If it's a file, copy it to the destination
+		  fs.copyFileSync(sourceFile, destinationFile);
+		} else {
+		  // If it's a directory, recursively copy it
+		  copyFolder(sourceFile, destinationFile);
+		}
+	  });
+  
+	  //console.log('Folder copied successfully.');
+	} catch (error) {
+	  console.error("Update", 'Error copying folder: '+ error);
+	}
+  }
 
 function ensureExists(path, mask) {
 	if (typeof mask != 'number') {
