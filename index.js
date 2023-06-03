@@ -48,6 +48,8 @@ for (var i = 0; i < ll.length; i++) {
 			env: process.env,
 			shell: true
 		})
+		console.log("Update", "Complete update. Proceed to restart...");
+		process.exit(7378278);
 	}
 
 	if (vern != verg) {
