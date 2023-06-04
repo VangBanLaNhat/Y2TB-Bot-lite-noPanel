@@ -7,7 +7,7 @@ var childProcess = require("child_process");
 var fs = require("fs");
 var path = require("path");
 var fetch = require("node-fetch");
-const git = require("download-git-repo");
+//const git = require("download-git-repo");
 const fse = require("fs-extra");
 
 var log = require("./core/util/log.js");
