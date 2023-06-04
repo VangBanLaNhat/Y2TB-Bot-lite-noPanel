@@ -79,7 +79,7 @@ console.blank = log.blank;
   }
 
   //Check Update
-  let text;
+  /*let text;
   //https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot/master/package.json
     //https://raw.githubusercontent.com/VangBanLaNhat/Y2TBBot/main/package.json
     let link = "https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot/master/package.json"
@@ -137,24 +137,11 @@ console.blank = log.blank;
       }
       await loader(true);
     })
-  } else await loader(true);
+  } else */
+  await loader(true);
   
   /**/
 })();
-
-const save = {
-  file: ["core/coreconfig.json"],
-  folder: [
-    ".git",
-    "data",
-    "lang",
-    "logs",
-    "node_modules",
-    "plugins",
-    "temp",
-    "udata"
-  ]
-}
 
 function removeDir(path) {
   if (fs.existsSync(path)) {
