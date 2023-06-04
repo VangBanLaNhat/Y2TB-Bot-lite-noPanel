@@ -366,8 +366,13 @@ async function getFileContent(linkDir) {
 		//console.log(response.data);
 		return content;
 	} catch (error) {
-		console.log(error);
-		return false;
+		//console.log(error);
+		try{
+			let cnt = (await axios.get('https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-data/main/PluginStorage/'+ linkDir)).data;
+			return cnt;
+		} catch (e){
+			return false;
+		}
 	}
 }
 
