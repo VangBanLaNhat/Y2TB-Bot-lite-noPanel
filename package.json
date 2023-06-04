@@ -25,7 +25,6 @@
     "adm-zip": "^0.5.9",
     "axios": "^0.21.4",
     "dotenv": "^10.0.0",
-    "download-git-repo": "^3.0.2",
     "enc": "",
     "event-stream": "^4.0.1",
     "fca-unofficial": "github:VangBanLaNhat/fca-unofficial",
