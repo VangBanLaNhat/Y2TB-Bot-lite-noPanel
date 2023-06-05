@@ -5,17 +5,19 @@ const log = require(path.join(__dirname, "log.js"));
 const scanDir = require(path.join(__dirname, "scanDir.js"));
 
 function loadConfig() {
-    !global.config ? global.config = {}:"";
+    !global.configPl ? global.configPl = {}:"";
     var dirConfig = path.join(__dirname, "..", "..", "udata", "Plugins config");
+    console.log(dirConfig)
     ensureExists(path.join(dirConfig, "backup"));
     var listConfig = scanDir(".json", dirConfig);
+    console.log(listConfig)
     var plugins = [];
-    for (var i = 0; i < listConfig.length; i++) {
+    for (let i in listConfig) {
         var pluginName = listConfig[i].split(".json")[0];
         if(global.plugins.Y2TB.plugins[pluginName] && global.plugins.Y2TB.plugins[pluginName].config){
             try{
-                var config = JSON.parse(stripBom(fs.readFileSync(path.join(dirConfig, listConfig[i]), {encoding: "utf8"})));
-                !global.config[pluginName] ? global.config[pluginName] = config:"";
+                let config = JSON.parse(fs.readFileSync(path.join(dirConfig, listConfig[i]), {encoding: "utf8"}));
+                !global.configPl[pluginName] ? global.configPl[pluginName] = config:"";
                 log.log("Config", `Loaded config for plugin "${pluginName}"`);
             }
             catch(err){
