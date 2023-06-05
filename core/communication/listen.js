@@ -58,8 +58,11 @@ async function mess(event, api) {
                     let adv = {
                     	pluginName: name,
                     	lang: global.lang[name],
+                    	rlang: (inp)=>{
+                    		return global.lang[name][inp][global.config.bot_info.lang];
+                    	},
                     	iso639: global.config.bot_info.lang,
-                    	config: global.config[name],
+                    	config: global.configPl[name],
                     	replaceMap: replaceMap
                     };
                     
@@ -96,8 +99,11 @@ async function chathook(event, api) {
             let adv = {
             	pluginName: name,
             	lang: global.lang[name],
+            	rlang: (inp)=>{
+            		return global.lang[name][inp][global.config.bot_info.lang];
+            	},
             	iso639: global.config.bot_info.lang,
-            	config: global.config[name],
+            	config: global.configPl[name],
             	replaceMap: replaceMap
             };
             
