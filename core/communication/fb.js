@@ -27,8 +27,11 @@ module.exports = async (appState, loginOptions) => {
             	let adv = {
             		pluginName: i,
             		lang: global.lang[i],
+            		rlang: (inp)=>{
+                    		return global.lang[i][inp][global.config.bot_info.lang];
+                    	},
             		iso639: global.config.bot_info.lang,
-            		config: global.config[i],
+            		config: global.configPl[i],
             		replaceMap: replaceMap
             	};
                 await global.plugins.Y2TB.plugins[i].loginFunc(api, adv);
