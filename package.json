@@ -36,6 +36,7 @@
     "stream-buffers": "^3.0.2",
     "strip-bom": "^4.0.0",
     "sync-request": "^6.1.0",
-    "wait-for-stuff": "^1.4.0"
+    "wait-for-stuff": "^1.4.0",
+    "semver": "^7.5.1"
   }
 }
