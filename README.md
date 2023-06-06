@@ -1,2 +1,2 @@
 # Y2TB-Bot
-Hehe làm ny tui hok :3
+https://github.com/VangBanLaNhat/Y2TB-Bot
