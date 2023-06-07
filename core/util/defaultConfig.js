@@ -14,7 +14,10 @@ function normal () {
     		"UIDmode": "disabled",
     		"blackList": [],
     		"whiteList": []
-    	}
+    	},
+		"plug": {
+			"autodown": true
+		}
     }
 }
 
