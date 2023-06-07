@@ -41,15 +41,15 @@ for (var i = 0; i < ll.length; i++) {
 	}
 
 	if (fs.existsSync(path.join(__dirname, "update"))) {
-		console.warn("Update", "Proceed to update node_modules...")
+		//console.warn("Update", "Proceed to update node_modules...")
 		deleteFolderRecursive(path.join(__dirname, "update"));
-		cmd.execSync(`npm install`, {
+		/*cmd.execSync(`npm install`, {
 			stdio: "inherit",
 			env: process.env,
 			shell: true
 		})
 		console.log("Update", "Complete update. Proceed to restart...");
-		process.exit(7378278);
+		process.exit(7378278);*/
 	}
 
 	if (vern != verg) {
