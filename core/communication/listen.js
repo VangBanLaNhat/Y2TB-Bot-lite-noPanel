@@ -129,6 +129,7 @@ function checkList(uid, tid) {
 }
 
 function replaceMap(str, map){
+ str = str+"";
 	for(let i in map)
 		str = str.replaceAll(i, map[i]);
 	return str;
