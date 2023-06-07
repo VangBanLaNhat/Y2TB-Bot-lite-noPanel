@@ -7,10 +7,10 @@ const scanDir = require(path.join(__dirname, "scanDir.js"));
 function loadConfig() {
     !global.configPl ? global.configPl = {}:"";
     var dirConfig = path.join(__dirname, "..", "..", "udata", "Plugins config");
-    console.log(dirConfig)
+    //console.log(dirConfig)
     ensureExists(path.join(dirConfig, "backup"));
     var listConfig = scanDir(".json", dirConfig);
-    console.log(listConfig)
+    //console.log(listConfig)
     var plugins = [];
     for (let i in listConfig) {
         var pluginName = listConfig[i].split(".json")[0];
