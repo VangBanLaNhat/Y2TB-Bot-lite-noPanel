@@ -25,7 +25,7 @@ async function loadPlugin() {
 
 	ensureExists(path.join(__dirname, "..", "..", "plugins", "obb"));
 	if (global.coreconfig.main_bot.developMode) {
-		log.log("Plugins(Y2TB)", "In developer mode only develop plugin and plugin eval, help, devtool can load!");
+		log.log("Plugins(Y2TB)", "In developer mode only develop plugin and plugin eval, help, plugins store can load!");
 		var list = scanDir(".js", path.join(__dirname, "..", "..", "plugins"));
 		ensureExists(path.join(__dirname, "..", "..", "plugins", "cache"));
 		var listFile = [];
@@ -52,12 +52,14 @@ async function loadPlugin() {
 	}
 	!global.data.pluginTemp ? global.data.pluginTemp = {
 		"Eval.js": "0.0.0",
-		"Help.js": "0.0.0"
+		"Help.js": "0.0.0",
+		"pluginsStore.js": "0.0.0"
 	}: "";
 	if (global.coreconfig.main_bot.developMode) {
 		var list = {
 			"Eval.js": "0.0.0",
-			"Help.js": "0.0.0"
+			"Help.js": "0.0.0",
+			"pluginsStore.js": "0.0.0"
 		}
 	} else {
 		var list = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "plugins", "pluginList.json")).toString());
