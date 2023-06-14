@@ -5,7 +5,7 @@ const log = require(path.join(__dirname, "..", "util", "log.js"));
 
 async function listen(err, event, api) {
     if (!event) return;
-    if (!event.threadID || !event.senderID) return;
+    if (!event.threadID && !event.senderID) return;
     api.markAsRead(event.threadID, (err) => {
         if (err) log.err(err);
     });
