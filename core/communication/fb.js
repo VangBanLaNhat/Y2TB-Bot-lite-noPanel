@@ -7,7 +7,6 @@ var log = require(path.join(__dirname, "..", "util", "log.js"));
 module.exports = async (appState, loginOptions) => {
     var opts = loginOptions;
     delete opts["userAgent"];
-    var ch = false;
 	
     login({ appState }, opts, async (err, api) => {
         if (err) {
@@ -15,9 +14,9 @@ module.exports = async (appState, loginOptions) => {
             log.err("Login", err);
             process.exit(1);
         }
-        if(!ch){
+        if(!global.botid){
             global.botid = api.getCurrentUserID()+"";
-            ch = true;
+            //global.fbapi = api;
         }
 
 
@@ -32,7 +31,9 @@ module.exports = async (appState, loginOptions) => {
                     	},
             		iso639: global.config.bot_info.lang,
             		config: global.configPl[i],
-            		replaceMap: replaceMap
+            		replaceMap: replaceMap,
+            		getUserInfo: api.getUserInfo,
+                    getThreadInfo: api.getThreadInfo
             	};
                 await global.plugins.Y2TB.plugins[i].loginFunc(api, adv);
                 delete global.plugins.Y2TB.plugins[i].loginFunc;
