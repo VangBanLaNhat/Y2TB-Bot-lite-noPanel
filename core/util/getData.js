@@ -39,13 +39,28 @@ function getprdt(){
             global.prdata = JSON.parse(stripBom(fs.readFileSync(path.join(__dirname, "..", "..", "data", "prdata.json"), {encoding: "utf8"})));
         }
         catch (err) {
-            log.err("Data", `Cannot write .data, returned an error: ${err}`, "Existing...");
+            log.err("Data", `Cannot write data, returned an error: ${err}`, "Existing...");
             process.exit(102);
         }
     }
     else{
         global.prdata = JSON.parse(stripBom(fs.readFileSync(path.join(__dirname, "..", "..", "data", "prdata.json"), {encoding: "utf8"})));
     }
+}
+
+function getUser(){
+	if(!fs.existsSync(path.join(__dirname, "..", "..", "data", "user.json"))){
+		try {
+            ensureExists(path.join(__dirname, "..", "..", "data"));
+            
+            fs.writeFileSync(path.join(__dirname, "..", "..", "data", "user.json"), JSON.stringify({}, null, 4), {mode: 0o666});
+            global.userInfo = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "data", "user.json"), {encoding: "utf8"}));
+        }
+        catch (err) {
+            log.err("Data", `Cannot write data, returned an error: ${err}`, "Existing...");
+            process.exit(102);
+        }
+	} else global.userInfo = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "data", "user.json"), {encoding: "utf8"}));
 }
 
 function ensureExists(path, mask) {
@@ -66,5 +81,6 @@ function ensureExists(path, mask) {
 }
 module.exports = {
     getdt,
-    getprdt
+    getprdt,
+    getUser
 }
