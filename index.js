@@ -44,16 +44,16 @@ for (var i = 0; i < ll.length; i++) {
 		console.warn("Update", "Proceed to update node_modules...")
 		deleteFolderRecursive(path.join(__dirname, "update"));
 		let listModule = (JSON.parse(fs.readFileSync(path.join(__dirname, "package.json")))).dependencies;
+		let listInstall = "";
 		for(let i in listModule){
-			let name = i;
-			listModule[i].indexOf("^") != -1 ? name+="@"+listModule[i]:"";
-			cmd.execSync(`npm install `+name, {
-				stdio: "inherit",
-				env: process.env,
-				shell: true
-			})
+			listInstall += " " + i;
+			listModule[i].indexOf("^") != -1 ? listInstall+="@"+listModule[i]:"";
 		}
-		
+		cmd.execSync(`npm install`+listInstall, {
+			stdio: "inherit",
+			env: process.env,
+			shell: true
+		})
 		console.log("Update", "Complete update. Proceed to restart...");
 		process.exit(7378278);
 	}
