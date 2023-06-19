@@ -41,15 +41,21 @@ for (var i = 0; i < ll.length; i++) {
 	}
 
 	if (fs.existsSync(path.join(__dirname, "update"))) {
-		//console.warn("Update", "Proceed to update node_modules...")
+		console.warn("Update", "Proceed to update node_modules...")
 		deleteFolderRecursive(path.join(__dirname, "update"));
-		/*cmd.execSync(`npm install`, {
-			stdio: "inherit",
-			env: process.env,
-			shell: true
-		})
+		let listModule = (JSON.parse(fs.readFileSync(path.join(__dirname, "package.json")))).dependencies;
+		for(let i in listModule){
+			let name = i;
+			listModule[i].indexOf("^") != -1 ? name+="@"+listModule[i]:"";
+			cmd.execSync(`npm install `+name, {
+				stdio: "inherit",
+				env: process.env,
+				shell: true
+			})
+		}
+		
 		console.log("Update", "Complete update. Proceed to restart...");
-		process.exit(7378278);*/
+		process.exit(7378278);
 	}
 
 	if (vern != verg) {
@@ -109,6 +115,8 @@ for (var i = 0; i < ll.length; i++) {
 	log.log("Data", "Loading data...");
 	try {
 		require("./core/util/getData.js").getdt();
+		require("./core/util/getData.js").getUser();
+		global.threadInfo = {};
 		log.log("Data", "Loading data success!");
 	}
 	catch (err) {
@@ -120,6 +128,7 @@ for (var i = 0; i < ll.length; i++) {
 	setInterval(function () {
 		try {
 			fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(global.data, null, 4), { mode: 0o666 });
+			fs.writeFileSync(path.join(__dirname, "data", "user.json"), JSON.stringify(global.userInfo, null, 4), { mode: 0o666 });
 		}
 		catch (err) {
 			if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
@@ -212,6 +221,7 @@ for (var i = 0; i < ll.length; i++) {
 process.on('exit', function (code) {
 	try {
 		fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(global.data, null, 4), { mode: 0o666 });
+		fs.writeFileSync(path.join(__dirname, "data", "user.json"), JSON.stringify(global.userInfo, null, 4), { mode: 0o666 });
 		console.log("Data", "Saved data!")
 		//fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
 	}
