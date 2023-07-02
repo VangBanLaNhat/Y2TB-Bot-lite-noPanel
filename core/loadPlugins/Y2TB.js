@@ -265,19 +265,19 @@ async function load(file, pluginInfo, func, devmode) {
 				global.plugins.Y2TB.plugins[pluginInfo.pluginName].config = true;
 			} else {
 				if (!fs.existsSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`))) {
-					if (!fs.existsSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`)))
+					if (!fs.existsSync(path.join(__dirname, "..", "..", "udata", "Plugins config", "backup", `${pluginInfo.pluginName}.json`)))
 						fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(pluginInfo.config, null, 4), {
 						mode: 0o666
 					})
 					else {
-						fs.renameSync(path.join(__dirname, "..", "..", "lang", "backup", `${pluginInfo.pluginName}.json`), path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`))
+						fs.renameSync(path.join(__dirname, "..", "..", "udata", "Plugins config", "backup", `${pluginInfo.pluginName}.json`), path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`))
 						//Check config.json file
 						var configjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`)));
 						for (let l in configjs)
-							!pluginInfo.config[l] ? delete configjs[l]: "";
+							pluginInfo.config[l] == undefined ? delete configjs[l]: "";
 						//Check plugin
 						for (let l in pluginInfo.config)
-							!configjs[l] ? configjs[l] = pluginInfo.config[l]: "";
+							configjs[l] == undefined ? configjs[l] = pluginInfo.config[l]: "";
 						fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(configjs, null, 4), {
 							mode: 0o666
 						});
@@ -286,10 +286,10 @@ async function load(file, pluginInfo, func, devmode) {
 					//Check config.json file
 					var configjs = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`)));
 					for (let l in configjs)
-						!pluginInfo.config[l] ? delete configjs[l]: "";
+						pluginInfo.config[l] == undefined ? delete configjs[l]: "";
 					//Check plugin
 					for (let l in pluginInfo.config)
-						!configjs[l] ? configjs[l] = pluginInfo.config[l]: "";
+						configjs[l] == undefined ? configjs[l] = pluginInfo.config[l]: "";
 					fs.writeFileSync(path.join(__dirname, "..", "..", "udata", "Plugins config", `${pluginInfo.pluginName}.json`), JSON.stringify(configjs, null, 4), {
 						mode: 0o666
 					});
