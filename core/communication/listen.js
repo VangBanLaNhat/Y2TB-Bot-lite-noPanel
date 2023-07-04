@@ -193,14 +193,14 @@ const strFunc = `async function getUserInfo(uid, callback){
 		}
 		if(uid != event.senderID || !event.isGroup){
 			try {
-				var UI = await api.getUserInfo(uid);
+				var UI = (await api.getUserInfo(uid))[uid];
 			}catch(e){
 				if(callback) return callback(e);
 				throw new Error(e);
 			}
 			global.userInfo[uid] = Object.assign({}, UI);
 			let time = new Date();
-			global.userInfo[uid]. timestamp = time.getTime();
+			global.userInfo[uid].timestamp = time.getTime();
 		} else {
 			try {
 				var threadInfo = await api.getThreadInfo(event.threadID);
