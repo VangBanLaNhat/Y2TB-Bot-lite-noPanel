@@ -12,6 +12,10 @@ var lx = require("luxon");
 var log = require("./core/util/log.js"); log.sync();
 var scanDir = require("./core/util/scanDir.js");
 
+const linkUpdate = "https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip";
+const versionUpdate = "https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/main/package.json";
+const folderUpdate = "Y2TB-Bot-lite-noPanel-main";
+
 //Write logs
 
 var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
@@ -34,7 +38,7 @@ for (var i = 0; i < ll.length; i++) {
 	console.log("Update", "Checking update...");
 	let vern = (JSON.parse(fs.readFileSync(path.join(__dirname, "package.json")))).version;
 	try {
-		var verg = (await axios.get('https://raw.githubusercontent.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/main/package.json')).data.version;
+		var verg = (await axios.get(versionUpdate)).data.version;
 	} catch (e) {
 		console.error("Update", e, "Failed to connect to to the server!");
 		process.exit(504);
@@ -83,13 +87,13 @@ for (var i = 0; i < ll.length; i++) {
 
 		let minus = ["tool", "plugins"];
 
-		let listFile = fs.readdirSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main"));
+		let listFile = fs.readdirSync(path.join(pathFile, folderUpdate));
 		// delete require.cache[require.resolve("./core/util/log.js")];
 		// delete require.cache[require.resolve("./core/util/scanDir.js")]
 		for (let i of listFile)
 			if (minus.indexOf(i) == -1) {
-				if (!fs.lstatSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i)).isFile()) copyFolder(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
-				else fs.renameSync(path.join(pathFile, "Y2TB-Bot-lite-noPanel-main", i), path.join(pathFile, "..", i));
+				if (!fs.lstatSync(path.join(pathFile, folderUpdate, i)).isFile()) copyFolder(path.join(pathFile, folderUpdate, i), path.join(pathFile, "..", i));
+				else fs.renameSync(path.join(pathFile, folderUpdate, i), path.join(pathFile, "..", i));
 			}
 		console.log("Update", "Complete update. Proceed to restart...");
 		process.exit(7378278);
@@ -233,7 +237,7 @@ process.on('exit', function (code) {
 });
 
 async function downloadUpdate(pathFile) {
-	let url = 'https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/archive/refs/heads/main.zip';
+	let url = linkUpdate;
 
 	ensureExists(pathFile);
 
