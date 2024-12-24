@@ -12,17 +12,17 @@ var readline = require("readline");
 function log(...msg){
     if(msg.length > 1){
 		if(msg[0] == ""){
-			classs = "Manager";
+			Class = "Manager";
 		}
 		else {
-			classs = msg[0];
+			Class = msg[0];
 		}
 	}
 	else {
-		classs = "Manager";
+		Class = "Manager";
 		msg.push(msg[0]);
 	}
-    classs= "["+classs+"]";
+    Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
     try{
@@ -33,34 +33,33 @@ function log(...msg){
     }//Color is Green
     var clcs = "\x1b[36m"; //Color is Cyan
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
-	for(i=1;i<msg.length;i++){
-		console.logg.apply(console, x.concat([clcs]).concat([classs]).concat([cl]).concat(msg[i]).concat([cl]));
-		try{
-		    if(global.coreconfig.main_bot.toggleLog){
-		        var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
 
-		        let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
-		        var str = y.concat([classs]).concat(mg).join(" ");
-		        fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
-		    }
-		}catch(err){}
-	}
+	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([cl]).concat(msg).concat([cl]));
+	try{
+		if(global.coreconfig.main_bot.toggleLog){
+			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
+
+			let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
+			var str = y.concat([Class]).concat(mg).join(" ");
+			fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
+		}
+	}catch(err){}
 }
 
 function err(...msg){
 	if(msg.length > 1){
 		if(msg[0] == ""){
-			classs = "Manager";
+			Class = "Manager";
 		}
 		else {
-			classs = msg[0];
+			Class = msg[0];
 		}
 	}
 	else {
-		classs = "Manager";
+		Class = "Manager";
 		msg.push(msg[0]);
 	}
-    classs= "["+classs+"]";
+    Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
     //readline.cursorTo(process.stdout, 0);
@@ -74,35 +73,33 @@ function err(...msg){
     var clerr = "\x1b[31m" //Color is Red
     var clwa = "\x1b[33m"; //Color is Yellow
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
-	for(i=1;i<msg.length;i++){
-		console.logg.apply(console, x.concat([clcs]).concat([classs]).concat([clerr]).concat(["[ERR!]"]).concat([clwa]).concat(msg[i]).concat([cl]));
-		try{
-		    if(global.coreconfig.main_bot.toggleLog){
-		        var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
+	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([clerr]).concat(["[ERR!]"]).concat([clwa]).concat(msg).concat([cl]));
+	try{
+		if(global.coreconfig.main_bot.toggleLog){
+			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
 
-		        let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
-		        var str = y.concat([classs]).concat(["[ERR!]"]).concat(mg).join(" ");
-		        fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
-		    }
-		}catch(err){}
-	}
+			let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
+			var str = y.concat([Class]).concat(["[ERR!]"]).concat(mg).join(" ");
+			fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
+		}
+	}catch(err){}
 }
 
 function warn(...msg){
     if(msg.length > 1){
 		if(msg[0] == ""){
-			classs = "Manager";
+			Class = "Manager";
 		}
 		else {
-			classs = msg[0];
+			Class = msg[0];
 		}
 	}
 	else {
-		classs = "Manager";
+		Class = "Manager";
 		msg.push(msg[0]);
 	}
-    if (classs=='') classs="Manager";
-    classs= "["+classs+"]";
+    if (Class=='') Class="Manager";
+    Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
     //readline.cursorTo(process.stdout, 0);
@@ -116,26 +113,24 @@ function warn(...msg){
     var clwarn = "\x1b[33m" //Color is Red
     var clwa = "\x1b[37m"; //Color is Yellow
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
-	for(i=1;i<msg.length;i++){
-		console.logg.apply(console, x.concat([clcs]).concat([classs]).concat([clwarn]).concat(["[WARN!]"]).concat([clwa]).concat(msg));
-		try{
-		    if(global.coreconfig.main_bot.toggleLog){
-		        var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
+	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([clwarn]).concat(["[WARN!]"]).concat([clwa]).concat(msg));
+	try{
+		if(global.coreconfig.main_bot.toggleLog){
+			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
 
-		        let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
-		        var str = y.concat([classs]).concat(["[WARN!]"]).concat(mg).join(" ");
-		        fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
-		    }
-	    }catch(err){}
-	}
+			let mg = typeof msg[i] == "object"?JSON.stringify(msg[i], null, 4):msg[i];
+			var str = y.concat([Class]).concat(["[WARN!]"]).concat(mg).join(" ");
+			fs.writeFileSync(path.join(__dirname, "..", "..", "logs", global.logStart+".txt"), str+"\n", {mode: 0o666, flag: "a"});
+		}
+	}catch(err){}
 }
    
 function blank(){
-	console.logg("\r");
+	console.Log("\r");
 }
 
 function sync(){
-	console.logg = console.log;
+	console.Log = console.log;
 	console.log = log;
 	console.error = err;
 	console.warn = warn;

@@ -10,7 +10,7 @@ const log = require("./core/util/log.js"); log.sync();
 
 (async () => {
   ensureExists(path.join(__dirname, "data"));
-  fs.writeFileSync(path.join(__dirname, "data", "isStart.txt"), "1");
+  // fs.writeFileSync(path.join(__dirname, "data", "isStart.txt"), "1");
 
   var semver = require("semver");
   var nodeVersion = semver.parse(process.version);
@@ -55,7 +55,7 @@ const log = require("./core/util/log.js"); log.sync();
       console.log();
       console.log("MAIN", `Function Index throw ${code} (not 7378278(RESTART)). Shutting down...`);
 
-      fs.writeFileSync(path.join(__dirname, "data", "isStart.txt"), "0");
+      // fs.writeFileSync(path.join(__dirname, "data", "isStart.txt"), "0");
       process.exit();
     });
     child.on("error", function (err) {

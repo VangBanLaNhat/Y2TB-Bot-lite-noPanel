@@ -102,32 +102,32 @@ for (var i = 0; i < ll.length; i++) {
 
 	//globalC = Object.assign({}, global);
 	log.blank();
-	log.log("Config", "Loading config...");
+	console.log("Config", "Loading config...");
 	try {
 		global.config = require("./core/util/getConfig.js").getConfig();
 		global.coreconfig = require("./core/util/getConfig.js").getCoreConfig();
-		log.log("Config", "Loading config success!");
+		console.log("Config", "Loading config success!");
 		log.blank();
 	}
 	catch (err) {
-		log.log(err);
-		log.err("Config", "Can't load Config. Existing...");
+		console.log(err);
+		console.error("Config", "Can't load Config. Existing...");
 		log.blank();
 		process.exit(101);
 	}
 
 	//data loader
 
-	log.log("Data", "Loading data...");
+	console.log("Data", "Loading data...");
 	try {
 		require("./core/util/getData.js").getdt();
 		require("./core/util/getData.js").getUser();
 		global.threadInfo = {};
-		log.log("Data", "Loading data success!");
+		console.log("Data", "Loading data success!");
 	}
 	catch (err) {
-		log.log(err);
-		log.err("Data", "Can't load Data. Existing...");
+		console.log(err);
+		console.error("Data", "Can't load Data. Existing...");
 		log.blank();
 		process.exit(102);
 	}
@@ -137,40 +137,61 @@ for (var i = 0; i < ll.length; i++) {
 			fs.writeFileSync(path.join(__dirname, "data", "user.json"), JSON.stringify(global.userInfo, null, 4), { mode: 0o666 });
 		}
 		catch (err) {
-			if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
+			if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') console.error("Data", "Can't auto save data with error: " + err);
 		}
 	}, global.coreconfig.main_bot.dataSaveTime * 1000)
 
 	//loadPlugins
 
-	log.log("Plugin", "Loading Plugins...")
+	console.log("Plugin", "Loading Plugins...")
 	try {
 		ensureExists(path.join(__dirname, "lang"));
 		await require("./core/util/loadPlugin.js")();
+
+		process.reload = async () => {
+			console.warn("Start reload...")
+			await require("./core/util/unloadPlugin.js")(); // Unload Plugins
+
+			await require("./core/util/loadPlugin.js")(); // Reload Plugins
+
+			console.log("Languages", "Loading Languages...");
+			require("./core/util/loadLang.js")(); // Reload Languages
+
+			console.log("Config", "Loading config for plugins...");
+			require("./core/util/loadConfig.js")(); // Reload Config of Plugins
+		}
 	}
 	catch (err) {
-		log.err("Plugins", "Can't load plugins with error: " + err);
+		console.error("Plugins", "Can't load plugins with error: " + err);
 	}
 
 	//loadLang
 
-	log.log("Languages", "Loading Languages...");
+	console.log("Languages", "Loading Languages...");
 	require("./core/util/loadLang.js")();
 
 	//Load Config of plugins
 
-	log.log("Config", "Loading config for plugins...");
+	console.log("Config", "Loading config for plugins...");
 	require("./core/util/loadConfig.js")();
-
+	await process.reload()
 	//credentials loader
 
 	let fbCredentials = {
 		email: global.config.facebook.FBemail,
 		password: global.config.facebook.FBpassword
 	}
-	log.log("Manager", "Loading User-credentials...");
-	fs.existsSync(path.join(__dirname, "udata", "fbstate.json")) ? log.log("Facebook", `=> Login account using FBstate`) : ((fbCredentials.email == "" && fbCredentials.password == "") ? log.err("Facebook", "=> No FBstate and FBCredentials blank ", "=> Unable to login!") : log.log("Facebook", `=> Login account using FBCredentials`))
-	log.blank();
+	console.log("Manager", "Loading User-credentials...");
+	if (fs.existsSync(path.join(__dirname, "udata", "fbstate.json"))) {
+		console.log("Facebook", `=> Login account using FBstate`)
+	} else if (fbCredentials.email == "" && fbCredentials.password == "") {
+		console.error("Facebook", "=> No FBstate and FBCredentials blank "); 
+		console.error("Facebook", "=> Unable to login!");
+	} else {
+		console.log("Facebook", `=> Login account using FBCredentials`)
+	}
+	
+	console.blank();
 
 	//login facebook!!!
 
@@ -185,7 +206,7 @@ for (var i = 0; i < ll.length; i++) {
 			"updatePresence": global.coreconfig.facebook.updatePresence,
 			"autoMarkRead": global.config.facebook.autoMarkRead
 		}
-		log.log("Manager", "Logging...")
+		console.log("Manager", "Logging...")
 		let appStatePath = path.join(__dirname, "udata", "fbstate.json");
 		let appState = {};
 		if (fs.existsSync(appStatePath)) {
@@ -194,24 +215,24 @@ for (var i = 0; i < ll.length; i++) {
 			await require("./core/communication/fb.js")(appState, loginOptions);
 		} else {
 			//login using credentials then create appstate
-			log.log("Manager", "Creating appstate for further login...");
+			console.log("Manager", "Creating appstate for further login...");
 			var rl = readline.createInterface({
 				input: process.stdin,
 				output: process.stdout
 			});
 			login(fbCredentials, loginOptions, (err, api) => {
-				log.log(err);
+				console.log(err);
 				if (err) {
 					switch (err.error) {
 						case 'login-approval':
-							log.log("Login", "Account detected with 2-step verification (2-FA) enabled\nPlease enter verification code to continue");
+							console.log("Login", "Account detected with 2-step verification (2-FA) enabled\nPlease enter verification code to continue");
 							rl.question("Verification code: ", (code) => {
 								err.continue(code);
 								rl.close();
 							});
 							break;
 						default:
-							log.err("login", err);
+							console.error("login", err);
 					}
 					return;
 				}
@@ -232,8 +253,9 @@ process.on('exit', function (code) {
 		//fs.writeFileSync(path.join(__dirname, "data", "prdata.json"), JSON.stringify(global.prdata, null, 4), {mode: 0o666});
 	}
 	catch (err) {
-		if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') log.err("Data", "Can't auto save data with error: " + err);
+		if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') console.error("Data", "Can't auto save data with error: " + err);
 	}
+	process.exit(0);
 });
 
 async function downloadUpdate(pathFile) {
