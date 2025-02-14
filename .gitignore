@@ -126,3 +126,5 @@ fb_dtsg_data.json
 udata/config.json
 udata/fbstate.json
 /udata/Plugins config
+/update
+package-lock.json

@@ -258,7 +258,6 @@ process.on('exit', function (code) {
 	catch (err) {
 		if (err != 'TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined') console.error("Data", "Can't auto save data with error: " + err);
 	}
-	process.exit(0);
 });
 
 async function downloadUpdate(pathFile) {
