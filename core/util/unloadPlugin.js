@@ -17,7 +17,7 @@ async function unloadMainPlugins(){
             await mainPlugins.unloadPlugins()
         }
         catch(err){
-            console.err("Plugins", `Can't unload main plugins "${list[i]}" with error: ${err}`);
+            console.error("Plugins", `Can't unload main plugins "${list[i]}" with error: ${err}`);
         }
     }
 }

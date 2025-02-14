@@ -23,7 +23,7 @@ async function main() {
 	let t = await git('github:VangBanLaNhat/Y2TBBot', 'temp', function (err) {
 		console.log(err ? 'Error' : 'Success');
 		// bcccct =1;
-		if(err) return console.log(err); //code tiep di, t đang cài cho Dung cái thoi =)) dạ :))))
+		if(err) return console.log(err);
 		let dir = path.join(__dirname, "..", "..", "test");
 		let listF = fs.readdirSync(dir);
 		let ct=[];

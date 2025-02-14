@@ -12,7 +12,7 @@ async function loadMainPlugins(){
             await mainPlugins.loadPlugins()
         }
         catch(err){
-            console.err("Plugins", `Can't load main plugins "${list[i]}" with error: ${err}`);
+            console.error("Plugins", `Can't load main plugins "${list[i]}" with error: ${err}`);
         }
     }
 }

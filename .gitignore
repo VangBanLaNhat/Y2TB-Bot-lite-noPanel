@@ -116,3 +116,13 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+core/coreconfig.json
+data/data.json
+data/isStart.txt
+data/user.json
+fb_dtsg_data.json
+/lang
+/plugins/obb
+udata/config.json
+udata/fbstate.json
+/udata/Plugins config

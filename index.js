@@ -3,7 +3,7 @@
 require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
-const login = require("fca-unofficial");
+const login = require("ws3-fca");
 const readline = require("readline");
 const axios = require("axios");
 const AdmZip = require("adm-zip");
@@ -149,7 +149,7 @@ for (var i = 0; i < ll.length; i++) {
 		await require("./core/util/loadPlugin.js")();
 
 		process.reload = async () => {
-			console.warn("Start reload...")
+			console.warn("Plugins", "Start reload...")
 			await require("./core/util/unloadPlugin.js")(); // Unload Plugins
 
 			await require("./core/util/loadPlugin.js")(); // Reload Plugins
@@ -159,6 +159,8 @@ for (var i = 0; i < ll.length; i++) {
 
 			console.log("Config", "Loading config for plugins...");
 			require("./core/util/loadConfig.js")(); // Reload Config of Plugins
+
+			console.warn("Plugins", "Plugins have been reloaded!");
 		}
 	}
 	catch (err) {
@@ -174,7 +176,7 @@ for (var i = 0; i < ll.length; i++) {
 
 	console.log("Config", "Loading config for plugins...");
 	require("./core/util/loadConfig.js")();
-	await process.reload()
+	
 	//credentials loader
 
 	let fbCredentials = {
@@ -187,6 +189,7 @@ for (var i = 0; i < ll.length; i++) {
 	} else if (fbCredentials.email == "" && fbCredentials.password == "") {
 		console.error("Facebook", "=> No FBstate and FBCredentials blank "); 
 		console.error("Facebook", "=> Unable to login!");
+		process.exit();
 	} else {
 		console.log("Facebook", `=> Login account using FBCredentials`)
 	}

@@ -4,7 +4,6 @@ const enc = require("enc");
 const fs = require('fs');
 const path = require("path");
 const cmd = require('child_process');
-const decache = require('decache');
 const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit({});
 const log = require(path.join(__dirname, "..", "util", "log.js"));

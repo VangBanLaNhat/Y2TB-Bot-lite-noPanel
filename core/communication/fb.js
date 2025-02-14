@@ -1,4 +1,4 @@
-const login = require("fca-unofficial");
+const login = require("ws3-fca")
 const fs = require("fs");
 const path = require("path");
 const listen = require(path.join(__dirname, "listen.js"))

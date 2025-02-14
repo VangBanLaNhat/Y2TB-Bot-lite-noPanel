@@ -25,16 +25,13 @@ function log(...msg){
     Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
-    try{
-		var cl = `\x1b[${global.coreconfig.main_bot.consoleColor}m`;
-    }
-    catch(err){
-        var cl = "\x1b[32m"
-    }//Color is Green
-    var clcs = "\x1b[36m"; //Color is Cyan
+    
+	var cl = `\x1b[38;5;195m`;
+    var clcs = "\x1b[36m"; //Color is Blue
+	let icon = `[ 🔔 ] `;
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
 
-	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([cl]).concat(msg).concat([cl]));
+	console.Log.apply(console, x.concat([icon]).concat([clcs]).concat([Class]).concat([cl]).concat(msg).concat([cl]));
 	try{
 		if(global.coreconfig.main_bot.toggleLog){
 			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
@@ -62,18 +59,13 @@ function err(...msg){
     Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
-    //readline.cursorTo(process.stdout, 0);
-    try{
-		var cl = `\x1b[${global.coreconfig.main_bot.consoleColor}m`;
-    }
-    catch(err){
-        var cl = "\x1b[32m"
-    } //Color is Green
-    var clcs = "\x1b[36m"; //Color is Cyan
-    var clerr = "\x1b[31m" //Color is Red
-    var clwa = "\x1b[33m"; //Color is Yellow
+    
+	var cl = `\x1b[38;5;195m`;
+    var clcs = "\x1b[36m"; //Color is Blue
+	let icon = `[ ❌ ] `;
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
-	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([clerr]).concat(["[ERR!]"]).concat([clwa]).concat(msg).concat([cl]));
+
+	console.Log.apply(console, x.concat([icon]).concat([clcs]).concat([Class]).concat([cl]).concat(msg).concat([cl]));
 	try{
 		if(global.coreconfig.main_bot.toggleLog){
 			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
@@ -98,22 +90,16 @@ function warn(...msg){
 		Class = "Manager";
 		msg.push(msg[0]);
 	}
-    if (Class=='') Class="Manager";
     Class= "["+Class+"]";
     msg[0]="";
     var dt = lx.DateTime.now().setZone("Asia/Ho_Chi_Minh");
-    //readline.cursorTo(process.stdout, 0);
-    try{
-    var cl = `\x1b[${global.coreconfig.main_bot.consoleColor}m`;
-    }
-    catch(err){
-        var cl = "\x1b[32m"
-    } //Color is Green
-    var clcs = "\x1b[36m"; //Color is Cyan
-    var clwarn = "\x1b[33m" //Color is Red
-    var clwa = "\x1b[37m"; //Color is Yellow
+    
+	var cl = `\x1b[38;5;195m`;
+    var clcs = "\x1b[36m"; //Color is Blue
+	let icon = "[ ⚠️ ] ";
     var x = [`${cl}[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];
-	console.Log.apply(console, x.concat([clcs]).concat([Class]).concat([clwarn]).concat(["[WARN!]"]).concat([clwa]).concat(msg));
+
+	console.Log.apply(console, x.concat([icon]).concat([clcs]).concat([Class]).concat([cl]).concat(msg).concat([cl]));
 	try{
 		if(global.coreconfig.main_bot.toggleLog){
 			var y = [`[${dt.day}.${dt.month}T${dt.hour}.${dt.minute}.${dt.second}Z]`];

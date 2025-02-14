@@ -14,7 +14,7 @@
   "keywords": [
     "chatbot"
   ],
-  "author": "Kaysil <kaysilminer@gmail.com> (kaysil.net)",
+  "author": "Kaysil <kaysilminer@gmail.com> (kaysil.net), HerokeyVN <herokey2018@gmail.com>, Fong, Hygameo",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/VangBanLaNhat/Y2TB-Bot-lite-noPanel/issues"
@@ -27,7 +27,7 @@
     "dotenv": "^10.0.0",
     "enc": "",
     "event-stream": "^4.0.1",
-    "fca-unofficial": "github:VangBanLaNhat/fca-unofficial",
+    "ws3-fca": "github:VangBanLaNhat/ws3-fca",
     "fs-extra": "^10.1.0",
     "luxon": "",
     "node-fetch": "^2.6.1",
