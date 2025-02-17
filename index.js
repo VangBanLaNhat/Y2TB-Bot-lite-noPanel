@@ -248,6 +248,10 @@ for (var i = 0; i < ll.length; i++) {
 	}
 })();
 
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 process.on('exit', function (code) {
 	try {
 		fs.writeFileSync(path.join(__dirname, "data", "data.json"), JSON.stringify(global.data, null, 4), { mode: 0o666 });
