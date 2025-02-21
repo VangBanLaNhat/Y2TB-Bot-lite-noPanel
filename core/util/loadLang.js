@@ -21,7 +21,7 @@ function loadLang() {
         if(global.plugins.Y2TB.plugins[pluginName] && global.plugins.Y2TB.plugins[pluginName].lang){
             try{
                 var lang = JSON.parse(stripBom(fs.readFileSync(path.join(dirLang, listLang[i]), {encoding: "utf8"})));
-                !global.lang[pluginName] ? global.lang[pluginName] = lang:"";
+                global.lang[pluginName] = lang;
                 log.log("Languages", `Loaded language for plugin "${pluginName}"`);
             }
             catch(err){
