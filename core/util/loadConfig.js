@@ -17,7 +17,7 @@ function loadConfig() {
         if(global.plugins.Y2TB.plugins[pluginName] && global.plugins.Y2TB.plugins[pluginName].config){
             try{
                 let config = JSON.parse(fs.readFileSync(path.join(dirConfig, listConfig[i]), {encoding: "utf8"}));
-                !global.configPl[pluginName] ? global.configPl[pluginName] = config:"";
+                global.configPl[pluginName] = config;
                 log.log("Config", `Loaded config for plugin "${pluginName}"`);
             }
             catch(err){
